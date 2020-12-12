@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySerializer", "PowerPlatform.EntitySerializer\PowerPlatform.EntitySerializer.csproj", "{7E5491F3-EB5D-4626-8075-686D88019600}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{595B1B67-4500-4AD0-93E3-15BFA52A9E54}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPlatform.EntitySerializer.Tests", "PowerPlatform.EntitySerializer.Tests\PowerPlatform.EntitySerializer.Tests.csproj", "{EAE30B23-7488-4479-97D5-13993DA22B60}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E5491F3-EB5D-4626-8075-686D88019600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E5491F3-EB5D-4626-8075-686D88019600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E5491F3-EB5D-4626-8075-686D88019600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E5491F3-EB5D-4626-8075-686D88019600}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE30B23-7488-4479-97D5-13993DA22B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE30B23-7488-4479-97D5-13993DA22B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE30B23-7488-4479-97D5-13993DA22B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE30B23-7488-4479-97D5-13993DA22B60}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A9A6945-BD58-401D-8C8B-98102E62A5CE}
+	EndGlobalSection
+EndGlobal

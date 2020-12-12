@@ -1,0 +1,44 @@
+pool:
+  vmImage: 'windows-2019'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(Parameters.solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'DotNet Restore'
+  inputs:
+    command: restore
+    projects: '$(Parameters.solution)'
+
+- task: VSBuild@1
+  displayName: 'Build Solution'
+  inputs:
+    solution: '$(Parameters.solution)'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: VSTest@2
+  displayName: 'Unit Tests'
+  inputs:
+    testAssemblyVer2: |
+     **\$(BuildConfiguration)\**\*Tests.dll
+     !**\obj\**
+    codeCoverageEnabled: true
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: CopyFiles@2
+  displayName: 'Preparing NuGet packages'
+  inputs:
+    Contents: '**\XrmEntitySerializer*.nupkg'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+    flattenFolders: true
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
