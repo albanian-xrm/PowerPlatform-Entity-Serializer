@@ -20,6 +20,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>Logo_80x80.png</PackageIcon>
+    <Authors>Betim Beja</Authors>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerPlatform.Cds.Client" Version="0.3.1-Alpha" />
