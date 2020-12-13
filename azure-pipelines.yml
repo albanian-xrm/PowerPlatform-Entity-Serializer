@@ -37,9 +37,17 @@ steps:
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
   displayName: 'InternalsVisibleTo Secret'
 
+- powershell: echo "##vso[task.setvariable variable=Path;isOutput=true]$((get-item $env:SECURE_FILE).Directory.FullName)"
+  name: secretFolder
+  env:
+    Secure_File: $(SignKey.secureFilePath) 
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'Secret folder'
+
 - task: CopyFiles@2
   inputs:
-    contents: $(SignKey.secureFilePath) 
+    sourceFolder: $(secretFolder.Path)
+    contents: AlbanianXrm.snk 
     targetFolder: 'PowerPlatform.EntitySerializer'
     overWrite: true 
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
@@ -47,7 +55,8 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: $(InternalsVisibleTo.secureFilePath) 
+    sourceFolder: $(secretFolder.Path)
+    contents: InternalsVisibleTo.cs  
     targetFolder: 'PowerPlatform.EntitySerializer'
     overWrite: true 
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
@@ -55,7 +64,8 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: $(SignKey.secureFilePath) 
+    sourceFolder: $(secretFolder.Path)
+    contents: AlbanianXrm.snk 
     targetFolder: 'PowerPlatform.EntitySerializer.Tests'
     overWrite: true 
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
