@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{595B1B67
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
 		LICENSE = LICENSE
+		Logo_80x80.png = Logo_80x80.png
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySerializer.Tests", "PowerPlatform.EntitySerializer.Tests\PowerPlatform.EntitySerializer.Tests.csproj", "{EAE30B23-7488-4479-97D5-13993DA22B60}"

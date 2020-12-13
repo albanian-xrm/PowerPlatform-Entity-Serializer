@@ -7,7 +7,7 @@
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.1.1-alpha</Version>
     <Copyright>AlbanianXrm</Copyright>
     <Company>AlbanianXrm</Company>
     <Description>This library can serialize an Microsoft.Xrm.Sdk.Entity to Json and back using System.Text.Json.</Description>
@@ -19,8 +19,15 @@
     <PackageReleaseNotes>First version</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageIcon>Logo_80x80.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerPlatform.Cds.Client" Version="0.3.1-Alpha" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Logo_80x80.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

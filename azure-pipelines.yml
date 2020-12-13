@@ -2,6 +2,9 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
+- script: echo Starting build pipeline!
+  displayName: 'Hello from Albanian Xrm'
+
 - task: UseDotNet@2
   displayName: 'Use .Net 5'
   inputs:
@@ -19,6 +22,44 @@ steps:
   inputs:
     version: '3.0.x'
     packageType: runtime
+
+- task: DownloadSecureFile@1
+  name: SignKey 
+  inputs:
+    secureFile: 'AlbanianXrm.snk'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'Signing Secret'
+
+- task: DownloadSecureFile@1
+  name: InternalsVisibleTo 
+  inputs:
+    secureFile: 'InternalsVisibleTo.cs'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'InternalsVisibleTo Secret'
+
+- task: CopyFiles@2
+  inputs:
+    contents: $(SignKey.secureFilePath) 
+    targetFolder: 'PowerPlatform.EntitySerializer'
+    overWrite: true 
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'Overwrite AlbanianXrm.PowerPlatform.EntitySerializer SignKey'
+
+- task: CopyFiles@2
+  inputs:
+    contents: $(InternalsVisibleTo.secureFilePath) 
+    targetFolder: 'PowerPlatform.EntitySerializer'
+    overWrite: true 
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'Overwrite AlbanianXrm.PowerPlatform.EntitySerializer InternalsVisibleTo'
+
+- task: CopyFiles@2
+  inputs:
+    contents: $(SignKey.secureFilePath) 
+    targetFolder: 'PowerPlatform.EntitySerializer.Tests'
+    overWrite: true 
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  
+  displayName: 'Overwrite AlbanianXrm.PowerPlatform.EntitySerializer.Tests SignKey'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
