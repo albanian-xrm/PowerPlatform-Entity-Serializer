@@ -3,11 +3,19 @@ pool:
 
 steps:
 - task: UseDotNet@2
+  displayName: 'Use .Net 5'
   inputs:
     version: '5.0.x'
     packageType: runtime
 
 - task: UseDotNet@2
+  displayName: 'Use .Net Core 3.1'
+  inputs:
+    version: '3.1.x'
+    packageType: runtime
+
+- task: UseDotNet@2
+  displayName: 'Use .Net Core 3.0'
   inputs:
     version: '3.0.x'
     packageType: runtime
