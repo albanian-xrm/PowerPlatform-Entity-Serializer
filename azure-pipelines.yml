@@ -37,7 +37,7 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) -collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
+    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage"'
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
   displayName: 'Install ReportGenerator tool'  
