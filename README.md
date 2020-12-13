@@ -3,10 +3,11 @@
 |Build Status|
 |------------|
 |[![Build Status](https://dev.azure.com/Albanian-Xrm/PowerPlatform-Entity-Serializer/_apis/build/status/albanian-xrm.PowerPlatform-Entity-Serializer?branchName=main)](https://dev.azure.com/Albanian-Xrm/PowerPlatform-Entity-Serializer/_build/latest?definitionId=4&branchName=main)|
+|[![Build history](https://buildstats.info/azurepipelines/chart/Albanian-Xrm/PowerPlatform-Entity-Serializer/4)](https://dev.azure.com/Albanian-Xrm/PowerPlatform-Entity-Serializer/_build?definitionId=4)|
 
 |Package|NuGet|
 |------------|------------|
-|AlbanianXrm.PowerPlatform.EntitySerializer|[![AlbanianXrm.PowerPlatform.EntitySerializer](https://buildstats.info/nuget/AlbanianXrm.PowerPlatform.EntitySerializer)](https://www.nuget.org/packages/AlbanianXrm.PowerPlatform.EntitySerializer)|
+|AlbanianXrm.PowerPlatform.EntitySerializer|[![AlbanianXrm.PowerPlatform.EntitySerializer](https://buildstats.info/nuget/AlbanianXrm.PowerPlatform.EntitySerializer?includePreReleases=true)](https://www.nuget.org/packages/AlbanianXrm.PowerPlatform.EntitySerializer)|
 
 This library can serialize an Microsoft.Xrm.Sdk.Entity to Json and back using [System.Text.Json](https://docs.microsoft.com/en-us/dotnet/api/system.text.json).
 
