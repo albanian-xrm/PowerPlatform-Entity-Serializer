@@ -57,4 +57,4 @@ steps:
     Contents: '**\AlbanianXrm.PowerPlatform.EntitySerializer*.nupkg'
     TargetFolder: $(Build.ArtifactStagingDirectory)
     flattenFolders: true
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))  
