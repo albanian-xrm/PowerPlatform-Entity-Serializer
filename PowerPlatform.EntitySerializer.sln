@@ -7,10 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySeriali
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{595B1B67-4500-4AD0-93E3-15BFA52A9E54}"
 	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPlatform.EntitySerializer.Tests", "PowerPlatform.EntitySerializer.Tests\PowerPlatform.EntitySerializer.Tests.csproj", "{EAE30B23-7488-4479-97D5-13993DA22B60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySerializer.Tests", "PowerPlatform.EntitySerializer.Tests\PowerPlatform.EntitySerializer.Tests.csproj", "{EAE30B23-7488-4479-97D5-13993DA22B60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

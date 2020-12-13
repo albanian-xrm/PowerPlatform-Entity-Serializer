@@ -2,15 +2,15 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet 4.4.1'
+- task: UseDotNet@2
   inputs:
-    versionSpec: 4.4.1
+    version: '5.0.x'
+    packageType: runtime
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(Parameters.solution)'
+    version: '3.0.x'
+    packageType: runtime
 
 - task: DotNetCoreCLI@2
   displayName: 'DotNet Restore'
@@ -18,27 +18,22 @@ steps:
     command: restore
     projects: '$(Parameters.solution)'
 
-- task: VSBuild@1
-  displayName: 'Build Solution'
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(Parameters.solution)'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+    command: 'build'
+    arguments: '--configuration $(BuildConfiguration)'
+  displayName: 'dotnet build $(BuildConfiguration)'
 
-- task: VSTest@2
-  displayName: 'Unit Tests'
+- task: DotNetCoreCLI@2
   inputs:
-    testAssemblyVer2: |
-     **\$(BuildConfiguration)\**\*Tests.dll
-     !**\obj\**
-    codeCoverageEnabled: true
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
 
 - task: CopyFiles@2
   displayName: 'Preparing NuGet packages'
   inputs:
-    Contents: '**\XrmEntitySerializer*.nupkg'
+    Contents: '**\AlbanianXrm.PowerPlatform.EntitySerializer*.nupkg'
     TargetFolder: $(Build.ArtifactStagingDirectory)
     flattenFolders: true
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  

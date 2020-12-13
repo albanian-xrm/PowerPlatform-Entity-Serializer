@@ -8,7 +8,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 {
     public class RelatedEntityCollectionConverter : JsonConverter<RelatedEntityCollection>
     {
-        private EntitySerializerOptions entitySerializerOptions;
+        private readonly EntitySerializerOptions entitySerializerOptions;
         public RelatedEntityCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
             this.entitySerializerOptions = entitySerializerOptions;
