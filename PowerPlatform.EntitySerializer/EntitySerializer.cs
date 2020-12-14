@@ -13,6 +13,7 @@ namespace AlbanianXrm.PowerPlatform
     public class EntitySerializer
     {
         public const string TypePropertyName = "__type";
+        public const string ValuePropertyName = "__value";
 
         public static T Deserialize<T>(string json, EntitySerializerOptions options = default)
         {
@@ -54,6 +55,7 @@ namespace AlbanianXrm.PowerPlatform
                     CanConvert(typeof(EntityImageCollection), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(EntityReference), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(FormattedValueCollection), item, entitySerializerOptions.converters) ||
+                    CanConvert(typeof(Guid), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(KeyAttributeCollection), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(object), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(ParameterCollection), item, entitySerializerOptions.converters) ||
@@ -119,6 +121,13 @@ namespace AlbanianXrm.PowerPlatform
             if (!entitySerializerOptions.converters.ContainsKey(type))
             {
                 converter = new FormattedValueCollectionConverter(entitySerializerOptions);
+                entitySerializerOptions.converters.Add(type, converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+            }
+            type = typeof(Guid);
+            if (!entitySerializerOptions.converters.ContainsKey(type))
+            {
+                converter = new GuidConverter(entitySerializerOptions);
                 entitySerializerOptions.converters.Add(type, converter);
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
             }

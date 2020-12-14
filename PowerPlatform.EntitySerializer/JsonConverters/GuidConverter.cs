@@ -5,13 +5,13 @@ using System.Text.Json.Serialization;
 
 namespace AlbanianXrm.PowerPlatform.JsonConverters
 {
-    public class DateTimeConverter : JsonConverter<DateTime>, IObjectContractConverter
+    public class GuidConverter : JsonConverter<Guid>, IObjectContractConverter
     {
-        public const string TypeSchema = "DateTime:#System";
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        public const string TypeSchema = "Guid:#System";
+
         private readonly EntitySerializerOptions entitySerializerOptions;
 
-        public DateTimeConverter(EntitySerializerOptions entitySerializerOptions)
+        public GuidConverter(EntitySerializerOptions entitySerializerOptions)
         {
             this.entitySerializerOptions = entitySerializerOptions;
         }
@@ -32,7 +32,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 throw new JsonException();
             }
             reader.Read();
-            var value = GetDateTime(ref reader);
+            var value = reader.GetGuid();
 
             reader.Read();
             if (reader.TokenType != JsonTokenType.EndObject)
@@ -42,31 +42,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             return value;
         }
 
-        private DateTime GetDateTime(ref Utf8JsonReader reader)
+        public override Guid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (!reader.TryGetDateTime(out DateTime value))
-            {
-                var stringValue = reader.GetString();
-                if (stringValue.StartsWith("/Date(") && stringValue.EndsWith(")/"))
-                {
-                    return epoch.AddMilliseconds(double.Parse(stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length)));
-                }
-                else
-                {
-                    return DateTime.Parse(reader.GetString());
-                }
-            }
-            return value;
-        }
+            Debug.Assert(typeToConvert == typeof(Guid));
 
-
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            Debug.Assert(typeToConvert == typeof(DateTime));
-                      
             if (reader.TokenType == JsonTokenType.String)
             {
-                return GetDateTime(ref reader);
+                return reader.GetGuid();
             }
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
@@ -84,29 +66,27 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 {
                     throw new JsonException();
                 }
-                return (DateTime)ReadInternal(ref reader, typeToConvert, options);
+                return (Guid)ReadInternal(ref reader, typeToConvert, options);
             }
             else
             {
                 throw new JsonException();
             }
-          
         }
 
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)
         {
             if (entitySerializerOptions.writingSchema)
             {
                 writer.WriteStartObject();
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-                writer.WriteString(EntitySerializer.ValuePropertyName, value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                writer.WriteString(EntitySerializer.ValuePropertyName, value);
                 writer.WriteEndObject();
             }
             else
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                writer.WriteStringValue(value);
             }
-          
         }
     }
 }

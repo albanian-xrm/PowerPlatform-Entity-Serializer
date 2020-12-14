@@ -116,13 +116,48 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 throw new JsonException();
             }
-
             return (Entity)ReadInternal(ref reader, typeToConvert, options);
         }
 
         public override void Write(Utf8JsonWriter writer, Entity value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
+            Serialize(writer, options, attributeCollectionConverter, nameof(value.Attributes), value.Attributes);
+            if (value.EntityState.HasValue)
+            {
+                writer.WriteNumber(nameof(value.EntityState), (int)value.EntityState);
+            }
+            Serialize(writer, options, formattedValueCollectionConverter, nameof(value.FormattedValues), value.FormattedValues);
+            if (value.HasLazyFileAttribute)
+            {
+                writer.WriteBoolean(nameof(value.HasLazyFileAttribute), value.HasLazyFileAttribute);
+            }
+            writer.WriteString(nameof(value.Id), value.Id);
+            Serialize(writer, options, keyAttributeCollectionConverter, nameof(value.KeyAttributes), value.KeyAttributes);
+            if (value.LazyFileAttributeKey != null)
+            {
+                writer.WriteString(nameof(value.LazyFileAttributeKey), value.LazyFileAttributeKey);
+            }
+            //ToDo: serialize value.LazyFileAttributeValue 
+            if (value.LazyFileSizeAttributeKey != null)
+            {
+                writer.WriteString(nameof(value.LazyFileSizeAttributeKey), value.LazyFileSizeAttributeKey);
+            }
+            if (value.LazyFileSizeAttributeValue != 0)
+            {
+                writer.WriteNumber(nameof(value.LazyFileSizeAttributeValue), value.LazyFileSizeAttributeValue);
+            }
+            writer.WriteString(nameof(value.LogicalName), value.LogicalName);
+            Serialize(writer, options, relatedEntityCollectionConverter, nameof(value.RelatedEntities), value.RelatedEntities);
+            if (value.RowVersion != null)
+            {
+                writer.WriteString(nameof(value.RowVersion), value.RowVersion);
+            }
+            writer.WriteEndObject();
+        }
+
+        private void Serialize<T>(Utf8JsonWriter writer, JsonSerializerOptions options, JsonConverter<T> converter, string propertyName, T value)
+        {
             var writingSchema = entitySerializerOptions.writingSchema;
             if (writingSchema)
             {
@@ -132,15 +167,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 entitySerializerOptions.writingSchema = true;
             }
-            writer.WritePropertyName(nameof(value.Attributes));
-            attributeCollectionConverter.Write(writer, value.Attributes, options);
+            writer.WritePropertyName(propertyName);
+            converter.Write(writer, value, options);
             entitySerializerOptions.writingSchema = writingSchema;
-            if (value.EntityState.HasValue)
-            {
-                writer.WriteNumber(nameof(value.EntityState), (int)value.EntityState);
-            }
-
-            writer.WriteEndObject();
         }
     }
 }
