@@ -7,7 +7,7 @@
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.1.1-alpha</Version>
+    <Version>0.1.2-alpha</Version>
     <Copyright>AlbanianXrm</Copyright>
     <Company>AlbanianXrm</Company>
     <Description>This library can serialize an Microsoft.Xrm.Sdk.Entity to Json and back using System.Text.Json.</Description>
