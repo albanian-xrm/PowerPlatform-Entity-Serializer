@@ -57,7 +57,9 @@ namespace AlbanianXrm.PowerPlatform
                     CanConvert(typeof(FormattedValueCollection), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(Guid), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(KeyAttributeCollection), item, entitySerializerOptions.converters) ||
+                    CanConvert(typeof(Money), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(object), item, entitySerializerOptions.converters) ||
+                    CanConvert(typeof(OptionSetValue), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(ParameterCollection), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(RelatedEntityCollection), item, entitySerializerOptions.converters) ||
                     CanConvert(typeof(RemoteExecutionContext), item, entitySerializerOptions.converters))
@@ -138,6 +140,20 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.converters.Add(type, converter);
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
             }
+            type = typeof(Money);
+            if (!entitySerializerOptions.converters.ContainsKey(type))
+            {
+                converter = new MoneyConverter(entitySerializerOptions);
+                entitySerializerOptions.converters.Add(type, converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+            }
+            type = typeof(OptionSetValue);
+            if (!entitySerializerOptions.converters.ContainsKey(type))
+            {
+                converter = new OptionSetValueConverter(entitySerializerOptions);
+                entitySerializerOptions.converters.Add(type, converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+            } 
             type = typeof(ParameterCollection);
             if (!entitySerializerOptions.converters.ContainsKey(type))
             {

@@ -72,6 +72,15 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                         throw new JsonException();
                                     }
                                     break;
+                                case JsonTokenType.String:
+                                    itemValue = reader.GetString();
+                                    break;
+                                case JsonTokenType.Number:
+                                    itemValue = reader.GetDecimal();
+                                    break;
+                                case JsonTokenType.Null:
+                                    itemValue = null;
+                                    break;
                                 default:
                                     throw new JsonException();
                             }

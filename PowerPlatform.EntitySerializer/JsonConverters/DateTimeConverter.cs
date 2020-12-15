@@ -49,7 +49,17 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 var stringValue = reader.GetString();
                 if (stringValue.StartsWith("/Date(") && stringValue.EndsWith(")/"))
                 {
-                    return epoch.AddMilliseconds(double.Parse(stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length)));
+                    stringValue = stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length);
+                    var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
+                    if (charTimezone == '+' || charTimezone == '-')
+                    {
+                        return epoch.AddMilliseconds(double.Parse(stringValue.Substring(0,stringValue.Length - 5))).AddHours(double.Parse(stringValue.Substring(stringValue.Length - 5, 3))).AddMinutes(double.Parse(charTimezone+ stringValue.Substring(stringValue.Length - 2)));
+                    }
+                    else
+                    {
+                        return epoch.AddMilliseconds(double.Parse(stringValue));
+                    }
+
                 }
                 else
                 {
@@ -63,7 +73,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             Debug.Assert(typeToConvert == typeof(DateTime));
-                      
+
             if (reader.TokenType == JsonTokenType.String)
             {
                 return GetDateTime(ref reader);
@@ -90,7 +100,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 throw new JsonException();
             }
-          
+
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
@@ -106,7 +116,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
             }
-          
+
         }
     }
 }

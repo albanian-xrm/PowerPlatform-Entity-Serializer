@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -67,8 +68,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                         throw new JsonException();
                                     }
                                     break;
+                                case JsonTokenType.StartArray:
+                                    itemValue = JsonSerializer.Deserialize<List<object>>(ref reader, options);
+                                    break;
                                 case JsonTokenType.String:
                                     itemValue = reader.GetString();
+                                    break;
+                                case JsonTokenType.Number:
+                                    itemValue = reader.GetDecimal();
                                     break;
                                 default:
                                     throw new JsonException();
