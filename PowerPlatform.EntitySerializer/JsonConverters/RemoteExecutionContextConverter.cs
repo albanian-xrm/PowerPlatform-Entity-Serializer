@@ -10,6 +10,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<ParameterCollection> parameterCollectionConverter;
+        private JsonConverter<DateTime> dateTimeConverter;
+        private JsonConverter<EntityImageCollection> entityImageCollectionConverter;
+        private JsonConverter<EntityReference> entityReferenceConverter;
+        private JsonConverter<Guid> guidConverter;
 
         public RemoteExecutionContextConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -42,22 +46,26 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 switch (propertyName)
                 {
                     case nameof(value.BusinessUnitId):
-                        value.BusinessUnitId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.BusinessUnitId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.CorrelationId):
-                        value.BusinessUnitId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.BusinessUnitId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.Depth):
                         value.Depth = reader.GetInt32();
                         break;
                     case nameof(value.InitiatingUserAzureActiveDirectoryObjectId):
-                        value.InitiatingUserAzureActiveDirectoryObjectId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.InitiatingUserAzureActiveDirectoryObjectId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.InitiatingUserId):
-                        value.InitiatingUserId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.InitiatingUserId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.InputParameters):
-                        if (parameterCollectionConverter == null) parameterCollectionConverter = (JsonConverter<ParameterCollection>)entitySerializerOptions.converters[typeof(ParameterCollection)];
+                        if (parameterCollectionConverter == null) parameterCollectionConverter = entitySerializerOptions.converters.GetForType<ParameterCollection>();
                         var inputParameters = parameterCollectionConverter.Read(ref reader, typeof(ParameterCollection), options);
                         foreach (var item in inputParameters)
                         {
@@ -83,19 +91,22 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.Mode = reader.GetInt32();
                         break;
                     case nameof(value.OperationCreatedOn):
-                        value.OperationCreatedOn = JsonSerializer.Deserialize<DateTime>(ref reader, options);
+                        if (dateTimeConverter == null) dateTimeConverter = entitySerializerOptions.converters.GetForType<DateTime>();
+                        value.OperationCreatedOn = dateTimeConverter.Read(ref reader, typeof(DateTime), options);
                         break;
                     case nameof(value.OperationId):
-                        value.OperationId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.OperationId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.OrganizationId):
-                        value.OrganizationId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.OrganizationId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.OrganizationName):
                         value.OrganizationName = reader.GetString();
                         break;
                     case nameof(value.OutputParameters):
-                        if (parameterCollectionConverter == null) parameterCollectionConverter = (JsonConverter<ParameterCollection>)entitySerializerOptions.converters[typeof(ParameterCollection)];
+                        if (parameterCollectionConverter == null) parameterCollectionConverter = entitySerializerOptions.converters.GetForType<ParameterCollection>();
                         var outputParameters = parameterCollectionConverter.Read(ref reader, typeof(ParameterCollection), options);
                         foreach (var item in outputParameters)
                         {
@@ -103,40 +114,45 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         }
                         break;
                     case nameof(value.OwningExtension):
-                        value.OwningExtension = JsonSerializer.Deserialize<EntityReference>(ref reader, options);
+                        if (entityReferenceConverter == null) entityReferenceConverter = entitySerializerOptions.converters.GetForType<EntityReference>();
+                        value.OwningExtension = entityReferenceConverter.Read(ref reader, typeof(EntityReference), options);
                         break;
                     case nameof(value.ParentContext):
                         value.ParentContext = Read(ref reader, typeof(RemoteExecutionContext), options);
                         break;
                     case nameof(value.PostEntityImages):
-                        var postEntityImages = JsonSerializer.Deserialize<EntityImageCollection>(ref reader, options);
+                        if (entityImageCollectionConverter == null) entityImageCollectionConverter = entitySerializerOptions.converters.GetForType<EntityImageCollection>();
+                        var postEntityImages = entityImageCollectionConverter.Read(ref reader, typeof(EntityImageCollection), options);
                         foreach (var item in postEntityImages)
                         {
                             value.PostEntityImages.Add(item);
                         }
                         break;
                     case nameof(value.PreEntityImages):
-                        var preEntityImages = JsonSerializer.Deserialize<EntityImageCollection>(ref reader, options);
+                        if (entityImageCollectionConverter == null) entityImageCollectionConverter = entitySerializerOptions.converters.GetForType<EntityImageCollection>();
+                        var preEntityImages = entityImageCollectionConverter.Read(ref reader, typeof(EntityImageCollection), options);
                         foreach (var item in preEntityImages)
                         {
                             value.PreEntityImages.Add(item);
                         }
                         break;
                     case nameof(value.PrimaryEntityId):
-                        value.PrimaryEntityId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.PrimaryEntityId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.PrimaryEntityName):
                         value.PrimaryEntityName = reader.GetString();
                         break;
                     case nameof(value.RequestId):
-                        value.RequestId = reader.TokenType == JsonTokenType.Null ? default(Guid?) : reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.RequestId = reader.TokenType == JsonTokenType.Null ? default(Guid?) : guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.SecondaryEntityName):
                         value.SecondaryEntityName = reader.GetString();
                         break;
                     case nameof(value.SharedVariables):
-                        if (parameterCollectionConverter == null) parameterCollectionConverter = (JsonConverter<ParameterCollection>)entitySerializerOptions.converters[typeof(ParameterCollection)];
-                        var sharedVariables = parameterCollectionConverter.Read(ref reader, typeof(ParameterCollection), options);                      
+                        if (parameterCollectionConverter == null) parameterCollectionConverter = entitySerializerOptions.converters.GetForType<ParameterCollection>();
+                        var sharedVariables = parameterCollectionConverter.Read(ref reader, typeof(ParameterCollection), options);
                         foreach (var item in sharedVariables)
                         {
                             value.SharedVariables.Add(item);
@@ -146,10 +162,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.Stage = reader.GetInt32();
                         break;
                     case nameof(value.UserAzureActiveDirectoryObjectId):
-                        value.UserAzureActiveDirectoryObjectId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.UserAzureActiveDirectoryObjectId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.UserId):
-                        value.UserId = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.UserId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     default:
                         throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");

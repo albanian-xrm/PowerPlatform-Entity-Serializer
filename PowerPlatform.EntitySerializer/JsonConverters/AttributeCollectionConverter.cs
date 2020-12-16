@@ -14,7 +14,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public AttributeCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
-            this.entitySerializerOptions = entitySerializerOptions;          
+            this.entitySerializerOptions = entitySerializerOptions;
         }
 
         public override AttributeCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -61,7 +61,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                     itemValue = reader.GetBoolean();
                                     break;
                                 case JsonTokenType.StartObject:
-                                    if(objectContractConverter==null) objectContractConverter = (JsonConverter<object>)entitySerializerOptions.converters[typeof(object)];
+                                    if (objectContractConverter == null) objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
                                     itemValue = objectContractConverter.Read(ref reader, typeof(object), options);
                                     if (reader.TokenType != JsonTokenType.EndObject)
                                     {

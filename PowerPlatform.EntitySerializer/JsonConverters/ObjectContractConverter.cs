@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -11,11 +10,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         private readonly Dictionary<string, IObjectContractConverter> schemaBindings = new Dictionary<string, IObjectContractConverter>();
         private readonly EntitySerializerOptions entitySerializerOptions;
+        private JsonConverter<List<object>> listOfObjectsConverter;
 
         public ObjectContractConverter(EntitySerializerOptions entitySerializerOptions)
         {
             this.entitySerializerOptions = entitySerializerOptions;
-            foreach (var objectContractConverter in entitySerializerOptions.converters.Values.Where(x => typeof(IObjectContractConverter).IsAssignableFrom(x.GetType())).Cast<IObjectContractConverter>())
+            foreach (var objectContractConverter in entitySerializerOptions.converters.ObjectContractConverters())
             {
                 this.schemaBindings.Add(objectContractConverter.GetTypeSchema(), objectContractConverter);
             }
@@ -105,7 +105,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 case JsonTokenType.StartObject:
                     return Read(ref reader, typeof(object), options);
                 case JsonTokenType.StartArray:
-                    return JsonSerializer.Deserialize<List<object>>(ref reader, options);
+                    if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<List<object>>();
+                    return listOfObjectsConverter.Read(ref reader, typeof(List<object>), options);
                 case JsonTokenType.String:
                     return reader.GetString();
                 case JsonTokenType.Number:

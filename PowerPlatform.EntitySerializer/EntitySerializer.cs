@@ -49,20 +49,21 @@ namespace AlbanianXrm.PowerPlatform
 
             foreach (var item in jsonSerializerOptions.Converters)
             {
-                if (CanConvert(typeof(AttributeCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(DateTime), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(Entity), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(EntityImageCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(EntityReference), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(FormattedValueCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(Guid), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(KeyAttributeCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(Money), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(object), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(OptionSetValue), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(ParameterCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(RelatedEntityCollection), item, entitySerializerOptions.converters) ||
-                    CanConvert(typeof(RemoteExecutionContext), item, entitySerializerOptions.converters))
+                if (CanConvert<AttributeCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<DateTime>(item, entitySerializerOptions.converters) ||
+                    CanConvert<Entity>(item, entitySerializerOptions.converters) ||
+                    CanConvert<EntityImageCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<EntityReference>(item, entitySerializerOptions.converters) ||
+                    CanConvert<FormattedValueCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<Guid>(item, entitySerializerOptions.converters) ||
+                    CanConvert<KeyAttributeCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<List<object>>(item, entitySerializerOptions.converters) ||
+                    CanConvert<Money>(item, entitySerializerOptions.converters) ||
+                    CanConvert<object>(item, entitySerializerOptions.converters) ||
+                    CanConvert<OptionSetValue>(item, entitySerializerOptions.converters) ||
+                    CanConvert<ParameterCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<RelatedEntityCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<RemoteExecutionContext>(item, entitySerializerOptions.converters))
                 {
                     continue;
                 }
@@ -71,116 +72,92 @@ namespace AlbanianXrm.PowerPlatform
             return jsonSerializerOptions;
         }
 
-        internal static bool CanConvert(Type type, JsonConverter item, Dictionary<Type, JsonConverter> converters)
+        internal static bool CanConvert<T>(JsonConverter item, EntitySerializerConverters converters)
         {
-            var canConvert = item.CanConvert(type);
-            if (canConvert && !converters.ContainsKey(type))
+            var canConvert = item.CanConvert(typeof(T));
+            if (canConvert && !converters.CanConvertType<T>())
             {
-                converters.Add(type, item);
+                converters.Set<T>((JsonConverter<T>)item);
             }
             return canConvert;
         }
 
         internal static void EnsureHasConverters(EntitySerializerOptions entitySerializerOptions)
         {
-            JsonConverter converter;
-            Type type = typeof(AttributeCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<AttributeCollection>())
             {
-                converter = new AttributeCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new AttributeCollectionConverter(entitySerializerOptions)));
             }
-            type = typeof(DateTime);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<DateTime>())
             {
-                converter = new DateTimeConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new DateTimeConverter(entitySerializerOptions)));
             }
-            type = typeof(Entity);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<Entity>())
             {
-                converter = new EntityConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new EntityConverter(entitySerializerOptions)));
             }
-            type = typeof(EntityImageCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<EntityImageCollection>())
             {
-                converter = new EntityImageCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new EntityImageCollectionConverter(entitySerializerOptions)));
             }
-            type = typeof(EntityReference);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<EntityReference>())
             {
-                converter = new EntityReferenceConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new EntityReferenceConverter(entitySerializerOptions)));
             }
-            type = typeof(FormattedValueCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<FormattedValueCollection>())
             {
-                converter = new FormattedValueCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new FormattedValueCollectionConverter(entitySerializerOptions)));
             }
-            type = typeof(Guid);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<Guid>())
             {
-                converter = new GuidConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new GuidConverter(entitySerializerOptions)));
             }
-            type = typeof(KeyAttributeCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<KeyAttributeCollection>())
             {
-                converter = new KeyAttributeCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new KeyAttributeCollectionConverter(entitySerializerOptions)));
             }
-            type = typeof(Money);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<List<object>>())
             {
-                converter = new MoneyConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ListOfObjectsConverter<object>(entitySerializerOptions)));
             }
-            type = typeof(OptionSetValue);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<Money>())
             {
-                converter = new OptionSetValueConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
-            } 
-            type = typeof(ParameterCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
-            {
-                converter = new ParameterCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new MoneyConverter(entitySerializerOptions)));
             }
-            type = typeof(RelatedEntityCollection);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<OptionSetValue>())
             {
-                converter = new RelatedEntityCollectionConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new OptionSetValueConverter(entitySerializerOptions)));
             }
-            type = typeof(RemoteExecutionContext);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<ParameterCollection>())
             {
-                converter = new RemoteExecutionContextConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ParameterCollectionConverter(entitySerializerOptions)));
             }
-            type = typeof(object);
-            if (!entitySerializerOptions.converters.ContainsKey(type))
+            if (!entitySerializerOptions.converters.CanConvertType<RelatedEntityCollection>())
             {
-                converter = new ObjectContractConverter(entitySerializerOptions);
-                entitySerializerOptions.converters.Add(type, converter);
-                entitySerializerOptions.JsonSerializerOptions.Converters.Add(converter);
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new RelatedEntityCollectionConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<RemoteExecutionContext>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new RemoteExecutionContextConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<object>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ObjectContractConverter(entitySerializerOptions)));
             }
         }
     }

@@ -49,7 +49,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                             itemKey = reader.GetString();
                             break;
                         case "value":
-                            if (entityConverter == null) entityConverter = (JsonConverter<Entity>)entitySerializerOptions.converters[typeof(Entity)];
+                            if (entityConverter == null) entityConverter = entitySerializerOptions.converters.GetForType<Entity>();
                             itemValue = entityConverter.Read(ref reader, typeof(Entity), options);
                             if (reader.TokenType != JsonTokenType.EndObject)
                             {

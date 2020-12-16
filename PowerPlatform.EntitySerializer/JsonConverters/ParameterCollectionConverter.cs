@@ -11,6 +11,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<object> objectContractConverter;
+        private JsonConverter<List<object>> listOfObjectsConverter;
 
         public ParameterCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -58,7 +59,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                     itemValue = reader.GetBoolean();
                                     break;
                                 case JsonTokenType.StartObject:
-                                    if (objectContractConverter == null) objectContractConverter = (JsonConverter<object>)entitySerializerOptions.converters[typeof(object)];
+                                    if (objectContractConverter == null) objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
                                     itemValue = objectContractConverter.Read(ref reader, typeof(object), options);
                                     if (reader.TokenType != JsonTokenType.EndObject)
                                     {
@@ -66,7 +67,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                     }
                                     break;
                                 case JsonTokenType.StartArray:
-                                    itemValue = JsonSerializer.Deserialize<List<object>>(ref reader, options);
+                                    if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<List<object>>();
+                                    itemValue = listOfObjectsConverter.Read(ref reader, typeof(List<object>), options);
                                     if (reader.TokenType != JsonTokenType.EndArray)
                                     {
                                         throw new JsonException();

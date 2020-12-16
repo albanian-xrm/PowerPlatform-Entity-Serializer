@@ -39,7 +39,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.Id = reader.GetGuid();
                         break;
                     case nameof(value.KeyAttributes):
-                        if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = (JsonConverter<KeyAttributeCollection>)entitySerializerOptions.converters[typeof(KeyAttributeCollection)];
+                        if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
                         var keyAttributes = keyAttributeCollectionConverter.Read(ref reader, typeof(KeyAttributeCollection), options);
                         foreach (var item in keyAttributes)
                         {
@@ -69,7 +69,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override EntityReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             Debug.Assert(typeToConvert == typeof(EntityReference));
-           
+
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;

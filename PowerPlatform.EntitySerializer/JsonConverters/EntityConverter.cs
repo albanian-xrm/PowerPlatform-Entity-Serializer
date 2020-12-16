@@ -39,7 +39,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 switch (propertyName)
                 {
                     case nameof(value.Attributes):
-                        if (attributeCollectionConverter == null) attributeCollectionConverter = (JsonConverter<AttributeCollection>)entitySerializerOptions.converters[typeof(AttributeCollection)];
+                        if (attributeCollectionConverter == null) attributeCollectionConverter = entitySerializerOptions.converters.GetForType<AttributeCollection>();
                         var attributes = attributeCollectionConverter.Read(ref reader, typeof(AttributeCollection), options);
                         foreach (var item in attributes)
                         {
@@ -50,7 +50,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.EntityState = reader.TokenType == JsonTokenType.Null ? default(EntityState?) : (EntityState)reader.GetInt32();
                         break;
                     case nameof(value.FormattedValues):
-                        if (formattedValueCollectionConverter == null) formattedValueCollectionConverter = (JsonConverter<FormattedValueCollection>)entitySerializerOptions.converters[typeof(FormattedValueCollection)];
+                        if (formattedValueCollectionConverter == null) formattedValueCollectionConverter = entitySerializerOptions.converters.GetForType<FormattedValueCollection>();
                         var formattedValues = formattedValueCollectionConverter.Read(ref reader, typeof(FormattedValueCollection), options);
                         foreach (var item in formattedValues)
                         {
@@ -64,7 +64,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.Id = reader.GetGuid();
                         break;
                     case nameof(value.KeyAttributes):
-                        if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = (JsonConverter<KeyAttributeCollection>)entitySerializerOptions.converters[typeof(KeyAttributeCollection)];
+                        if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
                         var keyAttributes = keyAttributeCollectionConverter.Read(ref reader, typeof(KeyAttributeCollection), options);
                         foreach (var item in keyAttributes)
                         {
@@ -87,7 +87,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.LogicalName = reader.GetString();
                         break;
                     case nameof(value.RelatedEntities):
-                        if (relatedEntityCollectionConverter == null) relatedEntityCollectionConverter = (JsonConverter<RelatedEntityCollection>)entitySerializerOptions.converters[typeof(RelatedEntityCollection)];
+                        if (relatedEntityCollectionConverter == null) relatedEntityCollectionConverter = entitySerializerOptions.converters.GetForType<RelatedEntityCollection>();
                         var relatedEntities = relatedEntityCollectionConverter.Read(ref reader, typeof(RelatedEntityCollection), options);
                         foreach (var item in relatedEntities)
                         {

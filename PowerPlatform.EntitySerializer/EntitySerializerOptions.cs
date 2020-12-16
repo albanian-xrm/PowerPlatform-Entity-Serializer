@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json;
 
 namespace AlbanianXrm.PowerPlatform
 {
@@ -10,7 +7,7 @@ namespace AlbanianXrm.PowerPlatform
         private WriteSchemaOptions _WriteSchema = WriteSchemaOptions.IfNeeded;
         
         internal bool writingSchema = false;
-        internal readonly Dictionary<Type, JsonConverter> converters = new Dictionary<Type, JsonConverter>();
+        internal readonly EntitySerializerConverters converters = new EntitySerializerConverters();
         
         public WriteSchemaOptions WriteSchema { get { return _WriteSchema; } set { writingSchema = value == WriteSchemaOptions.Always; _WriteSchema = value; } }
 
