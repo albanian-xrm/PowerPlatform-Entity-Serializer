@@ -74,9 +74,11 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     case nameof(value.LazyFileAttributeKey):
                         value.LazyFileAttributeKey = reader.GetString();
                         break;
+#if !NET462 && !NET472 && !NET48
                     case nameof(value.LazyFileAttributeValue):
                         value.LazyFileAttributeValue = new Lazy<object>(JsonSerializer.Deserialize<object>(ref reader, options));
                         break;
+#endif
                     case nameof(value.LazyFileSizeAttributeKey):
                         value.LazyFileSizeAttributeKey = reader.GetString();
                         break;
@@ -122,6 +124,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, Entity value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
+            if (entitySerializerOptions.writingSchema)
+            {
+                writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
+            }        
             Serialize(writer, options, attributeCollectionConverter, nameof(value.Attributes), value.Attributes);
             if (value.EntityState.HasValue)
             {

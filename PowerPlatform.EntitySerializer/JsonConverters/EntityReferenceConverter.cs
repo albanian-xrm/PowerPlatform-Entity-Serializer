@@ -12,6 +12,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<KeyAttributeCollection> keyAttributeCollectionConverter;
+        private JsonConverter<Guid> guidConverter;
 
         public EntityReferenceConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -36,7 +37,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 switch (propertyName)
                 {
                     case nameof(value.Id):
-                        value.Id = reader.GetGuid();
+                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        value.Id = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.KeyAttributes):
                         if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
@@ -86,6 +88,24 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, EntityReference value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
+            if (entitySerializerOptions.writingSchema)
+            {
+                writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
+            }
+            if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+            writer.WritePropertyName(nameof(value.Id));
+            guidConverter.Write(writer, value.Id, options);
+         
+            if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
+            writer.WritePropertyName(nameof(value.KeyAttributes));
+            keyAttributeCollectionConverter.Write(writer, value.KeyAttributes, options);
+
+            writer.WriteString(nameof(value.LogicalName), value.LogicalName);
+            
+            writer.WriteString(nameof(value.Name), value.Name);
+            
+            writer.WriteString(nameof(value.RowVersion), value.RowVersion);
+
             writer.WriteEndObject();
         }
     }

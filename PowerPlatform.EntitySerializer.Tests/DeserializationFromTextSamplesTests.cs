@@ -1,9 +1,10 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using AlbanianXrm.PowerPlatform;
+using Microsoft.Xrm.Sdk;
 using Xunit;
 
-namespace AlbanianXrm.PowerPlatform
+namespace EntitySerializerTests
 {
-    public class EntitySerializerTests
+    public class DeserializationFromTextSamplesTests
     {
         [Fact]
         public void RemoteExecutionContextCanBeDeserialized_Sample1()

@@ -42,7 +42,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             return value;
         }
 
-        private DateTime GetDateTime(ref Utf8JsonReader reader)
+        private static DateTime GetDateTime(ref Utf8JsonReader reader)
         {
             if (!reader.TryGetDateTime(out DateTime value))
             {
@@ -53,13 +53,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
                     if (charTimezone == '+' || charTimezone == '-')
                     {
-                        return epoch.AddMilliseconds(double.Parse(stringValue.Substring(0,stringValue.Length - 5))).AddHours(double.Parse(stringValue.Substring(stringValue.Length - 5, 3))).AddMinutes(double.Parse(charTimezone+ stringValue.Substring(stringValue.Length - 2)));
+                        return epoch.AddMilliseconds(double.Parse(stringValue.Substring(0, stringValue.Length - 5))).AddHours(double.Parse(stringValue.Substring(stringValue.Length - 5, 3))).AddMinutes(double.Parse(charTimezone + stringValue.Substring(stringValue.Length - 2)));
                     }
                     else
                     {
                         return epoch.AddMilliseconds(double.Parse(stringValue));
                     }
-
                 }
                 else
                 {

@@ -11,6 +11,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<object> objectContractConverter;
+        private JsonConverter<IList<object>> listOfObjectsConverter;
 
         public AttributeCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -47,39 +48,11 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     reader.Read();
                     switch (propertyName)
                     {
-                        case "key":
+                        case EntitySerializer.CollectionKeyPropertyName:
                             itemKey = reader.GetString();
                             break;
-                        case "value":
-                            switch (reader.TokenType)
-                            {
-                                case JsonTokenType.Null:
-                                    itemValue = null;
-                                    break;
-                                case JsonTokenType.True:
-                                case JsonTokenType.False:
-                                    itemValue = reader.GetBoolean();
-                                    break;
-                                case JsonTokenType.StartObject:
-                                    if (objectContractConverter == null) objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
-                                    itemValue = objectContractConverter.Read(ref reader, typeof(object), options);
-                                    if (reader.TokenType != JsonTokenType.EndObject)
-                                    {
-                                        throw new JsonException();
-                                    }
-                                    break;
-                                case JsonTokenType.StartArray:
-                                    itemValue = JsonSerializer.Deserialize<List<object>>(ref reader, options);
-                                    break;
-                                case JsonTokenType.String:
-                                    itemValue = reader.GetString();
-                                    break;
-                                case JsonTokenType.Number:
-                                    itemValue = reader.GetDecimal();
-                                    break;
-                                default:
-                                    throw new JsonException();
-                            }
+                        case EntitySerializer.CollectionValuePropertyName:
+                            itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter);
                             reader.Read();
                             break;
                         default:
@@ -98,10 +71,29 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, AttributeCollection value, JsonSerializerOptions options)
         {
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            var writingSchema = entitySerializerOptions.writingSchema;
             if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
             {
-
+                writingSchema = true;
             }
+            writer.WriteStartArray();
+            foreach (var item in value)
+            {
+                writer.WriteStartObject();
+                writer.WriteString(EntitySerializer.CollectionKeyPropertyName, item.Key);
+
+                writer.WritePropertyName(EntitySerializer.CollectionValuePropertyName);
+                if (objectContractConverter == null) objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
+                objectContractConverter.Write(writer, item.Value, options);
+
+                writer.WriteEndObject();
+            }
+            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

@@ -21,11 +21,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public object ReadInternal(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             reader.Read();
-
-            if (reader.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException();
-            }
+                     
             string propertyName = reader.GetString();
             if (propertyName != EntitySerializer.ValuePropertyName)
             {
@@ -53,10 +49,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
                 reader.Read();
-                if (reader.TokenType != JsonTokenType.PropertyName)
-                {
-                    throw new JsonException();
-                }
                 if (reader.GetString() != EntitySerializer.TypePropertyName)
                 {
                     throw new JsonException();

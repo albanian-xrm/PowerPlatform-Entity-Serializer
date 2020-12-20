@@ -45,10 +45,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     reader.Read();
                     switch (propertyName)
                     {
-                        case "key":
+                        case EntitySerializer.CollectionKeyPropertyName:
                             itemKey = reader.GetString();
                             break;
-                        case "value":
+                        case EntitySerializer.CollectionValuePropertyName:
                             if (entityConverter == null) entityConverter = entitySerializerOptions.converters.GetForType<Entity>();
                             itemValue = entityConverter.Read(ref reader, typeof(Entity), options);
                             if (reader.TokenType != JsonTokenType.EndObject)
@@ -73,7 +73,24 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, EntityImageCollection value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartArray();
+            foreach (var item in value)
+            {
+                writer.WriteStartObject();
+                writer.WriteString(EntitySerializer.CollectionKeyPropertyName, item.Key);
+
+                writer.WritePropertyName(EntitySerializer.CollectionValuePropertyName);
+                if (entityConverter == null) entityConverter = entitySerializerOptions.converters.GetForType<Entity>();
+                entityConverter.Write(writer, item.Value, options);
+
+                writer.WriteEndObject();
+            }
+            writer.WriteEndArray();
         }
     }
 }

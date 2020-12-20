@@ -14,6 +14,8 @@ namespace AlbanianXrm.PowerPlatform
     {
         public const string TypePropertyName = "__type";
         public const string ValuePropertyName = "__value";
+        public const string CollectionKeyPropertyName = "key";
+        public const string CollectionValuePropertyName = "value";
 
         public static T Deserialize<T>(string json, EntitySerializerOptions options = default)
         {
@@ -39,6 +41,12 @@ namespace AlbanianXrm.PowerPlatform
             return JsonSerializer.DeserializeAsync<T>(utf8Json, jsonSerializerOptions, cancellationToken);
         }
 
+        public static string Serialize(object value, Type inputType, EntitySerializerOptions options = default)
+        {
+            var jsonSerializerOptions = InitializeOptions(options);
+            return JsonSerializer.Serialize(value, inputType, jsonSerializerOptions);
+        }
+
         internal static JsonSerializerOptions InitializeOptions(EntitySerializerOptions entitySerializerOptions = default)
         {
             if (entitySerializerOptions == null)
@@ -51,18 +59,21 @@ namespace AlbanianXrm.PowerPlatform
             {
                 if (CanConvert<AttributeCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<DateTime>(item, entitySerializerOptions.converters) ||
+                    CanConvert<EntityCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Entity>(item, entitySerializerOptions.converters) ||
                     CanConvert<EntityImageCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<EntityReference>(item, entitySerializerOptions.converters) ||
                     CanConvert<FormattedValueCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Guid>(item, entitySerializerOptions.converters) ||
                     CanConvert<KeyAttributeCollection>(item, entitySerializerOptions.converters) ||
-                    CanConvert<List<object>>(item, entitySerializerOptions.converters) ||
+                    CanConvert<IList<object>>(item, entitySerializerOptions.converters) ||
+                    CanConvert<IList<Entity>>(item, entitySerializerOptions.converters) ||
                     CanConvert<Money>(item, entitySerializerOptions.converters) ||
                     CanConvert<object>(item, entitySerializerOptions.converters) ||
                     CanConvert<OptionSetValue>(item, entitySerializerOptions.converters) ||
                     CanConvert<ParameterCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<RelatedEntityCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<Relationship>(item, entitySerializerOptions.converters) ||
                     CanConvert<RemoteExecutionContext>(item, entitySerializerOptions.converters))
                 {
                     continue;
@@ -94,6 +105,11 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new DateTimeConverter(entitySerializerOptions)));
             }
+            if (!entitySerializerOptions.converters.CanConvertType<EntityCollection>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new EntityCollectionConverter(entitySerializerOptions)));
+            }
             if (!entitySerializerOptions.converters.CanConvertType<Entity>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
@@ -112,7 +128,7 @@ namespace AlbanianXrm.PowerPlatform
             if (!entitySerializerOptions.converters.CanConvertType<FormattedValueCollection>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
-                    entitySerializerOptions.converters.Set(new FormattedValueCollectionConverter(entitySerializerOptions)));
+                    entitySerializerOptions.converters.Set(new FormattedValueCollectionConverter()));
             }
             if (!entitySerializerOptions.converters.CanConvertType<Guid>())
             {
@@ -124,10 +140,15 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new KeyAttributeCollectionConverter(entitySerializerOptions)));
             }
-            if (!entitySerializerOptions.converters.CanConvertType<List<object>>())
+            if (!entitySerializerOptions.converters.CanConvertType<IList<object>>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new ListOfObjectsConverter<object>(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<IList<Entity>>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ListOfObjectsConverter<Entity>(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<Money>())
             {
@@ -143,6 +164,11 @@ namespace AlbanianXrm.PowerPlatform
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new ParameterCollectionConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<Relationship>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new RelationshipConverter(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<RelatedEntityCollection>())
             {

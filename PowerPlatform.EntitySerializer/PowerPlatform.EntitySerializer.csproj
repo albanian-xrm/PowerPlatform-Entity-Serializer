@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AlbanianXrm.PowerPlatform.EntitySerializer</AssemblyName>
     <RootNamespace>AlbanianXrm.PowerPlatform</RootNamespace>
-    <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;netcoreapp3.1;net5.0;net462;net472;net48</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -24,6 +24,15 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerPlatform.Cds.Client" Version="0.3.1-Alpha" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Logo_80x80.png">

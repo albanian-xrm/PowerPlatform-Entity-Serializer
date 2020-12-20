@@ -9,6 +9,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     public class RelatedEntityCollectionConverter : JsonConverter<RelatedEntityCollection>
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
+        private JsonConverter<Relationship> relationshipConverter;
+        private JsonConverter<EntityCollection> entityCollectionConverter;
+
         public RelatedEntityCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
             this.entitySerializerOptions = entitySerializerOptions;
@@ -43,30 +46,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     reader.Read();
                     switch (propertyName)
                     {
-                        case "key":
-                            if (reader.TokenType != JsonTokenType.StartObject)
-                            {
-                                throw new JsonException();
-                            }
-                            itemKey = JsonSerializer.Deserialize<Relationship>(ref reader, options);
-                            if (reader.TokenType != JsonTokenType.EndObject)
-                            {
-                                throw new JsonException();
-                            }
+                        case EntitySerializer.CollectionKeyPropertyName:
+                            if (relationshipConverter == null) relationshipConverter = entitySerializerOptions.converters.GetForType<Relationship>();
+                            itemKey = relationshipConverter.Read(ref reader, typeof(Relationship), options);
+                            reader.Read();
                             break;
-                        case "value":
-
-                            if (reader.TokenType != JsonTokenType.StartArray)
-                            {
-                                throw new JsonException();
-                            }
-                            itemValue = JsonSerializer.Deserialize<EntityCollection>(ref reader, options);
-                            if (reader.TokenType != JsonTokenType.EndArray)
-                            {
-                                throw new JsonException();
-                            }
-
-
+                        case EntitySerializer.CollectionValuePropertyName:
+                            if (entityCollectionConverter == null) entityCollectionConverter = entitySerializerOptions.converters.GetForType<EntityCollection>();
+                            itemValue = entityCollectionConverter.Read(ref reader, typeof(EntityCollection), options);
                             reader.Read();
                             break;
                         default:
@@ -85,7 +72,26 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, RelatedEntityCollection value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartArray();
+            foreach (var item in value)
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName(EntitySerializer.CollectionKeyPropertyName);
+                if (relationshipConverter == null) relationshipConverter = entitySerializerOptions.converters.GetForType<Relationship>();
+                relationshipConverter.Write(writer, item.Key, options);
+
+                writer.WritePropertyName(EntitySerializer.CollectionValuePropertyName);
+                if (entityCollectionConverter == null) entityCollectionConverter = entitySerializerOptions.converters.GetForType<EntityCollection>();
+                entityCollectionConverter.Write(writer, item.Value, options);
+
+                writer.WriteEndObject();
+            }
+            writer.WriteEndArray();
         }
     }
 }

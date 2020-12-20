@@ -170,7 +170,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.UserId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        throw new JsonException($"Unknknown property \"{propertyName}\" for RemoteExecutionContext type.");
                 }
                 if (!reader.Read())
                 {

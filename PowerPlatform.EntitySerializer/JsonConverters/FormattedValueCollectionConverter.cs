@@ -8,11 +8,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 {
     public class FormattedValueCollectionConverter : JsonConverter<FormattedValueCollection>
     {
-        private readonly EntitySerializerOptions entitySerializerOptions;
-        public FormattedValueCollectionConverter(EntitySerializerOptions entitySerializerOptions)
+        public FormattedValueCollectionConverter()
         {
-            this.entitySerializerOptions = entitySerializerOptions;
         }
+
         public override FormattedValueCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             Debug.Assert(typeToConvert == typeof(FormattedValueCollection));
@@ -43,10 +42,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     reader.Read();
                     switch (propertyName)
                     {
-                        case "key":
+                        case EntitySerializer.CollectionKeyPropertyName:
                             itemKey = reader.GetString();
                             break;
-                        case "value":
+                        case EntitySerializer.CollectionValuePropertyName:
                             if (reader.TokenType != JsonTokenType.String) throw new JsonException();
                             itemValue = reader.GetString();
                             reader.Read();
@@ -67,7 +66,20 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, FormattedValueCollection value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartArray();
+            foreach (var item in value)
+            {
+                writer.WriteStartObject();
+                writer.WriteString(EntitySerializer.CollectionKeyPropertyName, item.Key);
+                writer.WriteString(EntitySerializer.CollectionValuePropertyName, item.Value);
+                writer.WriteEndObject();
+            }
+            writer.WriteEndArray();
         }
     }
 }

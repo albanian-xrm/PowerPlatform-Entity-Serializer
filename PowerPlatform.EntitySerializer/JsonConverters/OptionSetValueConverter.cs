@@ -77,7 +77,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, OptionSetValue value, JsonSerializerOptions options)
         {
-            writer.WriteStartObject(); if (entitySerializerOptions.writingSchema)
+            writer.WriteStartObject();
+            if (entitySerializerOptions.writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             }

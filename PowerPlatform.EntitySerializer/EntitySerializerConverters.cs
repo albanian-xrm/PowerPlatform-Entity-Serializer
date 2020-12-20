@@ -15,6 +15,11 @@ namespace AlbanianXrm.PowerPlatform
             return converters.ContainsKey(typeof(T));
         }
 
+        public bool CanConvertType(Type type)
+        {
+            return converters.ContainsKey(type);
+        }
+
         public JsonConverter<T> GetForType<T>()
         {
             JsonConverter result;
@@ -25,9 +30,29 @@ namespace AlbanianXrm.PowerPlatform
             return (JsonConverter<T>)result;
         }
 
+        public JsonConverter GetForType(Type type)
+        {
+            JsonConverter result;
+
+            if (!converters.TryGetValue(type, out result))
+            {
+                var baseType = type.BaseType;
+                while (baseType != null && result == null)
+                {
+                    converters.TryGetValue(type, out result);
+                    baseType = baseType.BaseType;
+                }
+            }
+            if (result == null)
+            {
+                throw new Exception($"No converter registered for type {type}");
+            }
+            return result;
+        }
+
         public JsonConverter<T> Set<T>(JsonConverter<T> converter)
         {
-            if(CanConvertType<T>())
+            if (CanConvertType<T>())
             {
                 throw new Exception($"Converter for type {typeof(T)} is already registered");
             }

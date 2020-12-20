@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace AlbanianXrm.PowerPlatform.JsonConverters
 {
-    public class ListOfObjectsConverter<T> : JsonConverter<List<T>>
+    public class ListOfObjectsConverter<T> : JsonConverter<IList<T>>
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<T> genericConverter;
@@ -16,9 +16,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             this.entitySerializerOptions = entitySerializerOptions;
         }
 
-        public override List<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override IList<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(List<T>));
+            Debug.Assert(typeToConvert == typeof(IList<T>));
 
             if (reader.TokenType != JsonTokenType.StartArray)
             {
@@ -27,7 +27,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             List<T> result = new List<T>();
             reader.Read();
             if (reader.TokenType == JsonTokenType.EndArray) return result;
-            genericConverter = entitySerializerOptions.converters.GetForType<T>();
+            if (genericConverter == null) genericConverter = entitySerializerOptions.converters.GetForType<T>();
             while (reader.TokenType != JsonTokenType.EndArray)
             {
                 result.Add(genericConverter.Read(ref reader, typeof(T), options));
@@ -40,9 +40,20 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             return result;
         }
 
-        public override void Write(Utf8JsonWriter writer, List<T> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, IList<T> value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartArray();
+            if (genericConverter == null) genericConverter = entitySerializerOptions.converters.GetForType<T>();
+            foreach (var item in value)
+            {
+                genericConverter.Write(writer, item, options);
+            }
+            writer.WriteEndArray();
         }
     }
 }
