@@ -7,7 +7,7 @@
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.1.2-alpha</Version>
+    <Version>0.1.3-alpha</Version>
     <Copyright>AlbanianXrm</Copyright>
     <Company>AlbanianXrm</Company>
     <Description>This library can serialize an Microsoft.Xrm.Sdk.Entity to Json and back using System.Text.Json.</Description>
@@ -16,7 +16,8 @@
     <RepositoryUrl>https://github.com/albanian-xrm/PowerPlatform-Entity-Serializer.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>PowerPlatform Entity JSON</PackageTags>
-    <PackageReleaseNotes>First version</PackageReleaseNotes>
+    <PackageReleaseNotes>Should be able to serialize and deserialize correctly for most usecases.
+Added support for the full .net framework too.</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>Logo_80x80.png</PackageIcon>
