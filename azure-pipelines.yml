@@ -1,7 +1,7 @@
 pool:
   vmImage: 'windows-2022'
 
-name: $(SourceBranchName)+1.0.$(Date:yyMM)$(Rev:rrr)
+name: $(SourceBranchName)+1.0.$(Date:yyMM)$(Rev:r)
 
 steps:
 - script: echo Starting build pipeline!
