@@ -7,7 +7,7 @@
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-	<Version Condition="$(Version)==''">$([System.DateTime]::Now.ToString('1.0.yyMM90dd'))</Version>
+	<Version Condition="$(Version)==''">$([System.DateTime]::Now.ToString('1.yy.MMdd9'))</Version>
 	<AssemblyVersion>$(Version)</AssemblyVersion>
 	<FileVersion>$(Version)</FileVersion>
     <Copyright>AlbanianXrm</Copyright>
