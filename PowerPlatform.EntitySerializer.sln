@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySerializer", "PowerPlatform.EntitySerializer\PowerPlatform.EntitySerializer.csproj", "{7E5491F3-EB5D-4626-8075-686D88019600}"
 EndProject
@@ -14,6 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{595B1B67
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySerializer.Tests", "PowerPlatform.EntitySerializer.Tests\PowerPlatform.EntitySerializer.Tests.csproj", "{EAE30B23-7488-4479-97D5-13993DA22B60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerPlatform.EntitySerializer.Sources", "PowerPlatform.EntitySerializer.Sources", "{02FF129B-F501-4521-AB29-32AA2CA3B4B5}"
+	ProjectSection(SolutionItems) = preProject
+		PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec = PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec
+		PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.targets = PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.targets
+		PowerPlatform.EntitySerializer.Sources\README.md = PowerPlatform.EntitySerializer.Sources\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +39,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02FF129B-F501-4521-AB29-32AA2CA3B4B5} = {595B1B67-4500-4AD0-93E3-15BFA52A9E54}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A6945-BD58-401D-8C8B-98102E62A5CE}

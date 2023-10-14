@@ -1,9 +1,20 @@
 pool:
   vmImage: 'windows-2022'
 
+name: $(SourceBranchName)+1.0.$(Date:yyMM)$(Rev:rrr)
+
 steps:
 - script: echo Starting build pipeline!
   displayName: 'Hello from Albanian Xrm'
+
+- powershell: |
+    echo "##vso[task.setvariable variable=configuration;isOutput=true]$(IF($env:BRANCH -eq "refs/heads/master"){"Azure Pipelines"}else{"release"})"
+    echo "##vso[task.setvariable variable=BuildNumber;isOutput=true]$(($env:BuildNumber).Substring(($env:BuildNumber).LastIndexOf('+')+1))"
+  name: MyVars
+  env: 
+    BRANCH: $(Build.SourceBranch)
+    BuildNumber: $(Build.BuildNumber)
+  displayName: 'Set Configuration Variable'
 
 - task: DownloadSecureFile@1
   name: SignKey 
@@ -62,7 +73,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    arguments: '--configuration $(BuildConfiguration)'
+    arguments: '--configuration $(BuildConfiguration) -p:Version=$(MyVars.BuildNumber)'
   displayName: 'dotnet build $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -83,6 +94,12 @@ steps:
   inputs:  
     codeCoverageTool: Cobertura  
     summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml' 
+
+- task: NuGetCommand@2
+  inputs:
+    command: pack
+    packagesToPack: PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec
+    arguments: -p Version=$(MyVars.BuildNumber) 
 
 - task: CopyFiles@2
   displayName: 'Preparing NuGet packages'

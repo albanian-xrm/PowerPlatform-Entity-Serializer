@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>AlbanianXrm.PowerPlatform.EntitySerializer.Sources</id>
+		<version>$version$</version>
+		<title>AlbanianXrm's Entity Serializer</title>
+		<authors>Betim Beja;AlbanianXrm</authors>
+		<owners>AlbanianXrm</owners>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/albanian-xrm/PowerPlatform-Entity-Serializer</projectUrl>
+		<repository type="git" url="https://github.com/albanian-xrm/PowerPlatform-Entity-Serializer.git" />
+		<icon>images\Logo_80x80.png</icon>
+		<readme>docs\README.md</readme>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
+		<releaseNotes>
+			v$version$:
+			- First release
+		</releaseNotes>
+		<copyright>Copyright 2023</copyright>
+		<tags>Xrm AlbanianXrm Dataverse JSON</tags>
+	</metadata>
+	<files>
+		<file src="..\Logo_80x80.png" target="images\" />
+		<file src="README.md" target="docs\" />
+		<file src="AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets" target="build\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets" />
+		<file src="..\PowerPlatform.EntitySerializer\**\*.cs" exclude="**\InternalsVisibleTo.cs;**\obj\**\*.*" target="build\" />
+	</files>
+</package>
