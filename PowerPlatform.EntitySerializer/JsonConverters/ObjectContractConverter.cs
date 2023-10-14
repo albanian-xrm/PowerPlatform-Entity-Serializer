@@ -42,6 +42,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 throw new JsonException();
             }
             reader.Read();
+            if(reader.TokenType == JsonTokenType.EndObject)
+            {
+                return new object();
+            }
             if (reader.TokenType != JsonTokenType.PropertyName)
             {
                 throw new JsonException();
@@ -120,7 +124,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
-
+            writer.WriteStartObject();
+            writer.WriteEndObject();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -11,6 +12,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<object> objectContractConverter;
+        private JsonConverter<DateTime> dateTimeConverter;
+        private JsonConverter<Money> moneyConverter;
+        private JsonConverter<EntityReference> entityReferenceConverter;
         private JsonConverter<IList<object>> listOfObjectsConverter;
 
         public AttributeCollectionConverter(EntitySerializerOptions entitySerializerOptions)
@@ -88,12 +92,52 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 writer.WriteString(EntitySerializer.CollectionKeyPropertyName, item.Key);
 
                 writer.WritePropertyName(EntitySerializer.CollectionValuePropertyName);
-                if (objectContractConverter == null) objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
-                objectContractConverter.Write(writer, item.Value, options);
+
+                if (item.Value == null)
+                {
+                    writer.WriteNullValue();
+                }
+                else if (item.Value is DateTime dateTimeValue)
+                {
+                    InitializeDateTimeConverter();
+                    dateTimeConverter.Write(writer, dateTimeValue, options);
+                }
+                else if (item.Value is EntityReference entityReferenceValue)
+                {
+                    InitializeEntityReferenceConverter();
+                    entityReferenceConverter.Write(writer, entityReferenceValue, options);
+                }
+                else
+                {
+                    InitializeObjectContractConverter();
+                    objectContractConverter.Write(writer, item.Value, options);
+                }
 
                 writer.WriteEndObject();
             }
+            writer.WriteEndArray();
             entitySerializerOptions.writingSchema = writingSchema;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeDateTimeConverter()
+        {
+            if (dateTimeConverter == null)
+                dateTimeConverter = entitySerializerOptions.converters.GetForType<DateTime>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeEntityReferenceConverter()
+        {
+            if (entityReferenceConverter == null)
+                entityReferenceConverter = entitySerializerOptions.converters.GetForType<EntityReference>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeObjectContractConverter()
+        {
+            if (objectContractConverter == null) 
+                objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
         }
     }
 }

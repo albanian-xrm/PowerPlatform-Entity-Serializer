@@ -135,6 +135,11 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new GuidConverter(entitySerializerOptions)));
             }
+            if (!entitySerializerOptions.converters.CanConvertType<int>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new IntegerConverter(entitySerializerOptions)));
+            }
             if (!entitySerializerOptions.converters.CanConvertType<KeyAttributeCollection>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(

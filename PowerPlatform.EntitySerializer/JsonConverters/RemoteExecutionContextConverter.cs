@@ -51,7 +51,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         break;
                     case nameof(value.CorrelationId):
                         if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
-                        value.BusinessUnitId = guidConverter.Read(ref reader, typeof(Guid), options);
+                        value.CorrelationId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.Depth):
                         value.Depth = reader.GetInt32();

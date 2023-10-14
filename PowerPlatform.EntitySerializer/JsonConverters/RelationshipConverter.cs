@@ -34,6 +34,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 reader.Read();
                 switch (propertyName)
                 {
+                    case EntitySerializer.TypePropertyName:
+                        reader.GetString(); // should check right type?
+                        break;
                     case nameof(value.SchemaName):
                         value.SchemaName = reader.GetString();
                         break;

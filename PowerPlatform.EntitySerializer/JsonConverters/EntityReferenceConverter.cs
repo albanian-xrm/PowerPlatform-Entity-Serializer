@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -36,12 +37,15 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 reader.Read();
                 switch (propertyName)
                 {
+                    case EntitySerializer.TypePropertyName:
+                        reader.GetString(); // should check right type?
+                        break;
                     case nameof(value.Id):
-                        if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                        InitializeGuidConverter();
                         value.Id = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     case nameof(value.KeyAttributes):
-                        if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
+                        InitializeKeyAttributeCollectionConverter();
                         var keyAttributes = keyAttributeCollectionConverter.Read(ref reader, typeof(KeyAttributeCollection), options);
                         foreach (var item in keyAttributes)
                         {
@@ -91,22 +95,34 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             if (entitySerializerOptions.writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-            }
-            if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
-            writer.WritePropertyName(nameof(value.Id));
-            guidConverter.Write(writer, value.Id, options);
-         
-            if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
+            };
+            writer.WriteString(nameof(value.Id), value.Id);
+
+            InitializeKeyAttributeCollectionConverter();
             writer.WritePropertyName(nameof(value.KeyAttributes));
             keyAttributeCollectionConverter.Write(writer, value.KeyAttributes, options);
 
             writer.WriteString(nameof(value.LogicalName), value.LogicalName);
-            
+
             writer.WriteString(nameof(value.Name), value.Name);
-            
+
             writer.WriteString(nameof(value.RowVersion), value.RowVersion);
 
             writer.WriteEndObject();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeKeyAttributeCollectionConverter()
+        {
+            if (keyAttributeCollectionConverter == null)
+                keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeGuidConverter()
+        {
+            if (guidConverter == null)
+                guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
         }
     }
 }

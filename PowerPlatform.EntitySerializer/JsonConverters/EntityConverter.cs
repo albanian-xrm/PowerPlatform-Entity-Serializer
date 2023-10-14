@@ -38,6 +38,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 reader.Read();
                 switch (propertyName)
                 {
+                    case EntitySerializer.TypePropertyName:
+                        reader.GetString(); // should check right type?
+                        break;
                     case nameof(value.Attributes):
                         if (attributeCollectionConverter == null) attributeCollectionConverter = entitySerializerOptions.converters.GetForType<AttributeCollection>();
                         var attributes = attributeCollectionConverter.Read(ref reader, typeof(AttributeCollection), options);
@@ -127,18 +130,21 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             if (entitySerializerOptions.writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-            }        
+            }
+            if (attributeCollectionConverter == null) attributeCollectionConverter = entitySerializerOptions.converters.GetForType<AttributeCollection>();
             Serialize(writer, options, attributeCollectionConverter, nameof(value.Attributes), value.Attributes);
             if (value.EntityState.HasValue)
             {
                 writer.WriteNumber(nameof(value.EntityState), (int)value.EntityState);
             }
+            if (formattedValueCollectionConverter == null) formattedValueCollectionConverter = entitySerializerOptions.converters.GetForType<FormattedValueCollection>();
             Serialize(writer, options, formattedValueCollectionConverter, nameof(value.FormattedValues), value.FormattedValues);
             if (value.HasLazyFileAttribute)
             {
                 writer.WriteBoolean(nameof(value.HasLazyFileAttribute), value.HasLazyFileAttribute);
             }
             writer.WriteString(nameof(value.Id), value.Id);
+            if (keyAttributeCollectionConverter == null) keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
             Serialize(writer, options, keyAttributeCollectionConverter, nameof(value.KeyAttributes), value.KeyAttributes);
             if (value.LazyFileAttributeKey != null)
             {
@@ -154,6 +160,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 writer.WriteNumber(nameof(value.LazyFileSizeAttributeValue), value.LazyFileSizeAttributeValue);
             }
             writer.WriteString(nameof(value.LogicalName), value.LogicalName);
+            if (relatedEntityCollectionConverter == null) relatedEntityCollectionConverter = entitySerializerOptions.converters.GetForType<RelatedEntityCollection>();
             Serialize(writer, options, relatedEntityCollectionConverter, nameof(value.RelatedEntities), value.RelatedEntities);
             if (value.RowVersion != null)
             {
