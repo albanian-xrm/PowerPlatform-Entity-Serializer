@@ -49,16 +49,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 var stringValue = reader.GetString();
                 if (stringValue.StartsWith("/Date(") && stringValue.EndsWith(")/"))
                 {
-                    stringValue = stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length);
-                    var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
-                    if (charTimezone == '+' || charTimezone == '-')
-                    {
-                        return epoch.AddMilliseconds(double.Parse(stringValue.Substring(0, stringValue.Length - 5))).AddHours(double.Parse(stringValue.Substring(stringValue.Length - 5, 3))).AddMinutes(double.Parse(charTimezone + stringValue.Substring(stringValue.Length - 2)));
-                    }
-                    else
-                    {
-                        return epoch.AddMilliseconds(double.Parse(stringValue));
-                    }
+                    return ConvertFromString(stringValue);
                 }
                 else
                 {
@@ -66,6 +57,22 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 }
             }
             return value;
+        }
+
+        public static DateTime ConvertFromString(string stringValue)
+        {
+            stringValue = stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length);
+            var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
+            if (charTimezone == '+' || charTimezone == '-')
+            {
+                return epoch.AddMilliseconds(double.Parse(stringValue.Substring(0, stringValue.Length - 5)))
+                            .AddHours(double.Parse(stringValue.Substring(stringValue.Length - 5, 3)))
+                            .AddMinutes(double.Parse(charTimezone + stringValue.Substring(stringValue.Length - 2)));
+            }
+            else
+            {
+                return epoch.AddMilliseconds(double.Parse(stringValue));
+            }
         }
 
 

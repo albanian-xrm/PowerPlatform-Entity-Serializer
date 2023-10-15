@@ -15,7 +15,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private JsonConverter<DateTime> dateTimeConverter;
         private JsonConverter<Money> moneyConverter;
         private JsonConverter<EntityReference> entityReferenceConverter;
+        private JsonConverter<OptionSetValue> optionSetValueConverter;
         private JsonConverter<IList<object>> listOfObjectsConverter;
+        private JsonConverter<OptionSetValueCollection> optionSetValueCollectionConverter;
 
         public AttributeCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -56,6 +58,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                             itemKey = reader.GetString();
                             break;
                         case EntitySerializer.CollectionValuePropertyName:
+                            if (reader.TokenType == JsonTokenType.StartArray) // Choices
+                            {
+                                InitializeOptionSetValueCollectionConverter();
+                                itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
+                                reader.Read();
+                                break;
+                            }
                             itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter);
                             reader.Read();
                             break;
@@ -97,6 +106,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 {
                     writer.WriteNullValue();
                 }
+                else if (item.Value is bool boolValue)
+                {
+                    writer.WriteBooleanValue(boolValue);
+                }
                 else if (item.Value is DateTime dateTimeValue)
                 {
                     InitializeDateTimeConverter();
@@ -106,6 +119,25 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 {
                     InitializeEntityReferenceConverter();
                     entityReferenceConverter.Write(writer, entityReferenceValue, options);
+                }
+                else if (item.Value is Money moneyValue)
+                {
+                    InitializeMoneyConverter();
+                    moneyConverter.Write(writer, moneyValue, options);
+                }
+                else if (item.Value is OptionSetValue optionSetValue)
+                {
+                    InitializeOptionSetValueConverter();
+                    optionSetValueConverter.Write(writer, optionSetValue, options);
+                }
+                else if (item.Value is OptionSetValueCollection optionSetValues)
+                {
+                    InitializeOptionSetValueCollectionConverter();
+                    optionSetValueCollectionConverter.Write(writer, optionSetValues, options);
+                }
+                else if (item.Value is string stringValue)
+                {
+                    writer.WriteStringValue(stringValue);
                 }
                 else
                 {
@@ -134,9 +166,30 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeMoneyConverter()
+        {
+            if (moneyConverter == null)
+                moneyConverter = entitySerializerOptions.converters.GetForType<Money>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeOptionSetValueConverter()
+        {
+            if (optionSetValueConverter == null)
+                optionSetValueConverter = entitySerializerOptions.converters.GetForType<OptionSetValue>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeOptionSetValueCollectionConverter()
+        {
+            if (optionSetValueCollectionConverter == null)
+                optionSetValueCollectionConverter = entitySerializerOptions.converters.GetForType<OptionSetValueCollection>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void InitializeObjectContractConverter()
         {
-            if (objectContractConverter == null) 
+            if (objectContractConverter == null)
                 objectContractConverter = entitySerializerOptions.converters.GetForType<object>();
         }
     }

@@ -42,7 +42,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 throw new JsonException();
             }
             reader.Read();
-            if(reader.TokenType == JsonTokenType.EndObject)
+            if (reader.TokenType == JsonTokenType.EndObject)
             {
                 return new object();
             }
@@ -80,7 +80,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 reader.Read();
             }
             JsonConverter<object> temp = this;
-            object value = ReadValue(ref reader, options,entitySerializerOptions, ref temp, ref listOfObjectsConverter);
+            object value = ReadValue(ref reader, options, entitySerializerOptions, ref temp, ref listOfObjectsConverter);
             result.Add(key, value);
             reader.Read();
             while (reader.TokenType != JsonTokenType.EndObject)
@@ -114,9 +114,16 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
                     return listOfObjectsConverter.Read(ref reader, typeof(IList<object>), options);
                 case JsonTokenType.String:
-                    return reader.GetString();
+                    var stringResult = reader.GetString();
+                    if (stringResult.StartsWith("/Date(") && stringResult.EndsWith(")/"))
+                    {
+                        return DateTimeConverter.ConvertFromString(stringResult);
+                    }
+                    return stringResult;
                 case JsonTokenType.Number:
-                    return reader.GetDecimal();
+                    var decimalResult = reader.GetDecimal();
+                    if (decimalResult % 1 == 0) return (int)decimalResult;
+                    return decimalResult;
                 default:
                     throw new JsonException();
             }

@@ -1,9 +1,10 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using AlbanianXrm.PowerPlatform;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Diagnostics;
 using Xunit;
 
-namespace AlbanianXrm.PowerPlatform.JsonConvetersTests
+namespace JsonConvertersTests
 {
     public class EntityConverterTests
     {
@@ -17,7 +18,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConvetersTests
             var entity = new Entity("contact");
             entity.KeyAttributes.Add("key", 2);
             entity.FormattedValues.Add("fullname", "Betim Beja");
+            entity.Attributes.Add("fullname", "Betim Beja");
             entity.Attributes.Add("primarycustomerid", new EntityReference("account", "albx_id", "122333"));
+            entity.Attributes.Add("albx_iscompanyowner", true);
 
             string serializedEntity = EntitySerializer.Serialize(entity, typeof(Entity), entitySerializerOptions);
             Debug.WriteLine(serializedEntity);
@@ -30,13 +33,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConvetersTests
             Assert.Equal(2, deserializedEntity.KeyAttributes["key"]);
             
             var primarycustomerid = deserializedEntity.GetAttributeValue<EntityReference>("primarycustomerid");
+            Assert.Equal("Betim Beja", deserializedEntity.GetAttributeValue<string>("fullname"));
+            Assert.True(deserializedEntity.GetAttributeValue<bool>("albx_iscompanyowner"));
+
             Assert.NotNull(primarycustomerid);
             Assert.Equal("account", primarycustomerid.LogicalName);
-
             Assert.Equal(Guid.Empty, primarycustomerid.Id);
             Assert.NotEmpty(primarycustomerid.KeyAttributes);
             Assert.Equal("122333", primarycustomerid.KeyAttributes["albx_id"]);
         }
-
     }
 }

@@ -71,6 +71,7 @@ namespace AlbanianXrm.PowerPlatform
                     CanConvert<Money>(item, entitySerializerOptions.converters) ||
                     CanConvert<object>(item, entitySerializerOptions.converters) ||
                     CanConvert<OptionSetValue>(item, entitySerializerOptions.converters) ||
+                    CanConvert<OptionSetValueCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<ParameterCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<RelatedEntityCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Relationship>(item, entitySerializerOptions.converters) ||
@@ -164,6 +165,11 @@ namespace AlbanianXrm.PowerPlatform
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new OptionSetValueConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<OptionSetValueCollection>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new OptionSetValueCollectionConverter(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<ParameterCollection>())
             {

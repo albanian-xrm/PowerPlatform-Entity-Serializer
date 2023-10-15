@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,6 +15,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private JsonConverter<EntityImageCollection> entityImageCollectionConverter;
         private JsonConverter<EntityReference> entityReferenceConverter;
         private JsonConverter<Guid> guidConverter;
+        private JsonConverter<object> objectContractConverter;
+        private JsonConverter<IList<object>> listOfObjectsConverter;
 
         public RemoteExecutionContextConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -170,7 +173,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.UserId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for RemoteExecutionContext type.");
+                                               
+                        entitySerializerOptions.UnknownPropertiesLastSerialization[propertyName] = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter); ;
+                        break;
+                        //throw new JsonException($"Unknknown property \"{propertyName}\" for RemoteExecutionContext type.");
                 }
                 if (!reader.Read())
                 {
