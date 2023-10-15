@@ -99,7 +99,8 @@ steps:
   inputs:
     command: pack
     packagesToPack: PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec
-    arguments: -p Version=$(MyVars.BuildNumber) 
+    versioningScheme: byEnvVar
+    versionEnvVar: $(MyVars.BuildNumber)
 
 - task: CopyFiles@2
   displayName: 'Preparing NuGet packages'
