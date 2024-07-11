@@ -47,7 +47,7 @@ namespace AlbanianXrm.PowerPlatform
             return JsonSerializer.Serialize(value, inputType, jsonSerializerOptions);
         }
 
-        internal static JsonSerializerOptions InitializeOptions(EntitySerializerOptions entitySerializerOptions = default)
+        public static JsonSerializerOptions InitializeOptions(EntitySerializerOptions entitySerializerOptions = default)
         {
             if (entitySerializerOptions == null)
             {
@@ -84,7 +84,7 @@ namespace AlbanianXrm.PowerPlatform
             return jsonSerializerOptions;
         }
 
-        internal static bool CanConvert<T>(JsonConverter item, EntitySerializerConverters converters)
+        public static bool CanConvert<T>(JsonConverter item, EntitySerializerConverters converters)
         {
             var canConvert = item.CanConvert(typeof(T));
             if (canConvert && !converters.CanConvertType<T>())
@@ -94,7 +94,7 @@ namespace AlbanianXrm.PowerPlatform
             return canConvert;
         }
 
-        internal static void EnsureHasConverters(EntitySerializerOptions entitySerializerOptions)
+        public static void EnsureHasConverters(EntitySerializerOptions entitySerializerOptions)
         {
             if (!entitySerializerOptions.converters.CanConvertType<AttributeCollection>())
             {

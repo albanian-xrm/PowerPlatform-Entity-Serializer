@@ -480,10 +480,11 @@ namespace EntitySerializerTests
             Assert.Equal(40, remoteExecutionContext.Stage);
             Assert.Equal("Create", remoteExecutionContext.MessageName);
             Assert.Equal(321, target.GetAttributeValue<int>("shko_integer"));
+            Assert.Equal(321, target.GetAttributeValue<int?>("shko_integer"));
             var shko_currency = target.GetAttributeValue<Money>("shko_currency");
             Assert.NotNull(shko_currency);
             Assert.Equal(100,shko_currency.Value);
-            Assert.Equal(new DateTime(2023, 10, 17, 07, 00, 00), target.GetAttributeValue<DateTime>("shko_datetime"));
+            Assert.Equal(new DateTime(2023, 10, 17, 07, 00, 00, DateTimeKind.Utc), target.GetAttributeValue<DateTime>("shko_datetime"));
             Assert.Equal(10.12m, target.GetAttributeValue<decimal>("shko_decimal"));
             Assert.False(target.GetAttributeValue<bool>("shko_bool"));
             var shko_choice = target.GetAttributeValue<OptionSetValue>("shko_choice");

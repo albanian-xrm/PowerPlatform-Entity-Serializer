@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace AlbanianXrm.PowerPlatform
 {
-    internal class EntitySerializerConverters
+    public class EntitySerializerConverters
     {
         internal readonly Dictionary<Type, JsonConverter> converters = new Dictionary<Type, JsonConverter>();
 
