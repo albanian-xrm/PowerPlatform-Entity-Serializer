@@ -78,8 +78,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(DateTime));
-
             if (reader.TokenType == JsonTokenType.String)
             {
                 return GetDateTime(ref reader);

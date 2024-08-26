@@ -40,8 +40,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override Guid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(Guid));
-
             if (reader.TokenType == JsonTokenType.String)
             {
                 return reader.GetGuid();

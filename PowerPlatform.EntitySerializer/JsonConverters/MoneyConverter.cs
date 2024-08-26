@@ -45,8 +45,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override Money Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(Money));
-
             if (reader.TokenType == JsonTokenType.String)
             {
                 return new Money(reader.GetDecimal());

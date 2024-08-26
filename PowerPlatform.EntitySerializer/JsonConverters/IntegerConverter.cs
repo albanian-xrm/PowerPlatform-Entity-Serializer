@@ -40,8 +40,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(int));
-
             if (reader.TokenType == JsonTokenType.String)
             {
                 return reader.GetInt32();

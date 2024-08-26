@@ -59,8 +59,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override Relationship Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(Relationship));
-
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;

@@ -74,8 +74,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override EntityReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(EntityReference));
-
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;

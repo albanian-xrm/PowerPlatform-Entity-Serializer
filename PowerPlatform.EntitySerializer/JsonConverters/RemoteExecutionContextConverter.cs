@@ -24,8 +24,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         }
         public override RemoteExecutionContext Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(RemoteExecutionContext));
-
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;
@@ -173,8 +171,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.UserId = guidConverter.Read(ref reader, typeof(Guid), options);
                         break;
                     default:
-                                               
-                        entitySerializerOptions.UnknownPropertiesLastSerialization[propertyName] = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter); ;
+                        entitySerializerOptions.UnknownPropertiesLastSerialization[propertyName] = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter, propertyName);
                         break;
                         //throw new JsonException($"Unknknown property \"{propertyName}\" for RemoteExecutionContext type.");
                 }
