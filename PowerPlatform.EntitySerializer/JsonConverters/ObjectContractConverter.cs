@@ -35,8 +35,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(object));
-
             if (reader.TokenType != JsonTokenType.StartObject)
             {
                 throw new JsonException();
@@ -80,7 +78,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 reader.Read();
             }
             JsonConverter<object> temp = this;
-            object value = ReadValue(ref reader, options, entitySerializerOptions, ref temp, ref listOfObjectsConverter);
+            object value = ReadValue(ref reader, options, entitySerializerOptions, ref temp, ref listOfObjectsConverter, key);
             result.Add(key, value);
             reader.Read();
             while (reader.TokenType != JsonTokenType.EndObject)
@@ -91,14 +89,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 }
                 key = reader.GetString();
                 reader.Read();
-                value = ReadValue(ref reader, options, entitySerializerOptions, ref temp, ref listOfObjectsConverter);
+                value = ReadValue(ref reader, options, entitySerializerOptions, ref temp, ref listOfObjectsConverter, key);
                 result.Add(key, value);
                 reader.Read();
             }
             return result;
         }
 
-        internal static object ReadValue(ref Utf8JsonReader reader, JsonSerializerOptions options, EntitySerializerOptions entitySerializerOptions, ref JsonConverter<object> objectConverter, ref JsonConverter<IList<object>> listOfObjectsConverter)
+        internal static object ReadValue(ref Utf8JsonReader reader, JsonSerializerOptions options, EntitySerializerOptions entitySerializerOptions, ref JsonConverter<object> objectConverter, ref JsonConverter<IList<object>> listOfObjectsConverter, string itemKey)
         {
             switch (reader.TokenType)
             {
@@ -114,6 +112,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
                     return listOfObjectsConverter.Read(ref reader, typeof(IList<object>), options);
                 case JsonTokenType.String:
+                    if (itemKey != null && entitySerializerOptions.KnowGuidAttributes.Contains(itemKey))
+                    {
+                        return reader.GetGuid();
+                    }
                     var stringResult = reader.GetString();
                     if (stringResult.StartsWith("/Date(") && stringResult.EndsWith(")/"))
                     {

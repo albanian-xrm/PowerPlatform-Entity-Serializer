@@ -15,9 +15,9 @@
 		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
 		<releaseNotes>
 			v$version$:
-			- First release
+			- Added Known Guid Attributes option 
 		</releaseNotes>
-		<copyright>Copyright 2023</copyright>
+		<copyright>Copyright 2024</copyright>
 		<tags>Xrm AlbanianXrm Dataverse JSON</tags>
 	</metadata>
 	<files>

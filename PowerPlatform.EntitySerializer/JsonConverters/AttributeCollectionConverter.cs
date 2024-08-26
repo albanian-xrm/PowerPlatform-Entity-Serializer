@@ -26,8 +26,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override AttributeCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(AttributeCollection));
-
             if (reader.TokenType != JsonTokenType.StartArray)
             {
                 throw new JsonException();
@@ -65,7 +63,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                                 reader.Read();
                                 break;
                             }
-                            itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter);
+                            itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter, itemKey);
                             reader.Read();
                             break;
                         default:

@@ -1,6 +1,5 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,8 +17,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override IList<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(IList<T>));
-
             if (reader.TokenType != JsonTokenType.StartArray)
             {
                 throw new JsonException();

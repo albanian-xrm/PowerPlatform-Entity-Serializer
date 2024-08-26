@@ -8,13 +8,13 @@
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Include="xunit" Version="2.5.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" Condition="'$(TargetFramework)'!='net462' AND '$(TargetFramework)'!='net472' AND '$(TargetFramework)'!='net48'">
+    <PackageReference Include="coverlet.collector" Version="6.0.2" Condition="'$(TargetFramework)'!='net462' AND '$(TargetFramework)'!='net472' AND '$(TargetFramework)'!='net48'">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

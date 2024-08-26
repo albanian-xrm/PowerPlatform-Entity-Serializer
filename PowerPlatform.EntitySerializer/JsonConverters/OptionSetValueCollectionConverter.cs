@@ -46,8 +46,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override OptionSetValueCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(OptionSetValueCollection));
-
             if (reader.TokenType != JsonTokenType.StartArray)
             {
                 throw new JsonException();

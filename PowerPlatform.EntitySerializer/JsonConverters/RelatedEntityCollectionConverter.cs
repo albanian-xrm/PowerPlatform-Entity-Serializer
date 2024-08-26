@@ -18,8 +18,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         }
         public override RelatedEntityCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Debug.Assert(typeToConvert == typeof(RelatedEntityCollection));
-
             if (reader.TokenType != JsonTokenType.StartArray)
             {
                 throw new JsonException();
