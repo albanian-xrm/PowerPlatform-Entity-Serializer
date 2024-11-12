@@ -1,19 +1,18 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace AlbanianXrm.PowerPlatform
 {
     public class DeserializationEncodingTests
     {
-        [Fact]
-        public void HandleEncoding()
-        {
-            var input = @"
+        string input = @"
 {
   ""BusinessUnitId"": ""0669e963-e69c-ef11-8a6b-000d3a318589"",
   ""CorrelationId"": ""7038a274-4877-4f3f-a57a-0f4493a647c6"",
@@ -679,6 +678,11 @@ namespace AlbanianXrm.PowerPlatform
 }
 ";
 
+
+        [Fact]
+        public void HandleEncoding()
+        {
+
 #if NETCOREAPP
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
@@ -701,6 +705,31 @@ namespace AlbanianXrm.PowerPlatform
             Assert.Equal("АаБбВвГгДдЕеËëЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯяРРР", target.GetAttributeValue<string>("name"));
 
             Assert.Equal("ĢārūmžīmēščūļōšĶKĢĻČņ", target.GetAttributeValue<string>("new_name"));
+        }
+
+        [Fact]
+        public async Task HandleEncodingAsync()
+        {
+
+#if NETCOREAPP
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+            {
+                var remoteExecutionContext = await EntitySerializer.DeserializeAsync<RemoteExecutionContext>(stream);
+
+                Assert.NotNull(remoteExecutionContext);
+                Assert.NotNull(remoteExecutionContext.InputParameters);
+                Assert.True(remoteExecutionContext.InputParameters.ContainsKey("Target"));
+
+                var target = remoteExecutionContext.InputParameters["Target"] as Entity;
+                Assert.NotNull(target);
+
+                Assert.Equal("АаБбВвГгДдЕеËëЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯяРРР", target.GetAttributeValue<string>("name"));
+
+                Assert.Equal("ĢārūmžīmēščūļōšĶKĢĻČņ", target.GetAttributeValue<string>("new_name"));
+            }
         }
     }
 }

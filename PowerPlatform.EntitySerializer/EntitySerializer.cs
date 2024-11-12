@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -35,10 +36,39 @@ namespace AlbanianXrm.PowerPlatform
             return JsonSerializer.Deserialize<T>(utf8Json, jsonSerializerOptions);
         }
 
-        public static ValueTask<T> DeserializeAsync<T>(Stream utf8Json, EntitySerializerOptions options = default, CancellationToken cancellationToken = default)
+        public static async ValueTask<T> DeserializeAsync<T>(Stream sourceStream, EntitySerializerOptions options = default, CancellationToken cancellationToken = default)
         {
-            var jsonSerializerOptions = InitializeOptions(options);
-            return JsonSerializer.DeserializeAsync<T>(utf8Json, jsonSerializerOptions, cancellationToken);
+            // Initialize source and target encodings
+            Encoding sourceEncoding = Encoding.GetEncoding(1252);
+            Encoding targetEncoding = Encoding.UTF8;
+
+            // Create a target memory stream for the UTF-8 encoded data
+            using (var utf8MemoryStream = new MemoryStream())
+            {
+                // Read from the source stream with Windows-1252 encoding and write to the UTF-8 memory stream
+                using (var reader = new StreamReader(sourceStream))
+                using (var writer = new StreamWriter(utf8MemoryStream, targetEncoding, bufferSize: 1024, leaveOpen: true))
+                {
+                    char[] buffer = new char[1024];
+                    int charsRead;
+
+                    while ((charsRead = await reader.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        //deserialize buffer from sourceEncoding
+                        byte[] bytes = sourceEncoding.GetBytes(buffer, 0, charsRead);
+                        var targetBuffer = targetEncoding.GetChars(bytes);
+                        await writer.WriteAsync(targetBuffer, 0, targetBuffer.Length);
+                    }
+                    await writer.FlushAsync(); // Ensure all data is written
+                }
+
+                // Reset position in memory stream for deserialization
+                utf8MemoryStream.Position = 0;
+
+                // Deserialize from the UTF-8 encoded memory stream
+                var jsonSerializerOptions = InitializeOptions(options);
+                return await JsonSerializer.DeserializeAsync<T>(utf8MemoryStream, jsonSerializerOptions, cancellationToken);
+            }
         }
 
         public static string Serialize(object value, Type inputType, EntitySerializerOptions options = default)
