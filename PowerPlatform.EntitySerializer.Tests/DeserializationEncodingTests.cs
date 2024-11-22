@@ -687,13 +687,10 @@ namespace AlbanianXrm.PowerPlatform
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
             
-            var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(input);
-
-            //This would fix it, but somehow library should handle it:
-
-            //var encoding = Encoding.GetEncoding(1252);
-            //var inputFixedEncoding = Encoding.UTF8.GetString(encoding.GetBytes(input));
-            //var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(inputFixedEncoding);
+            var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(input, new EntitySerializerOptions()
+            {
+                EncodingToCorrect = Encoding.GetEncoding(1252)
+            });
 
             Assert.NotNull(remoteExecutionContext);
             Assert.NotNull(remoteExecutionContext.InputParameters);

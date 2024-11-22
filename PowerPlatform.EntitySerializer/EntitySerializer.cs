@@ -21,6 +21,11 @@ namespace AlbanianXrm.PowerPlatform
         public static T Deserialize<T>(string json, EntitySerializerOptions options = default)
         {
             var jsonSerializerOptions = InitializeOptions(options);
+            var encoding = options?.EncodingToCorrect;
+            if (encoding != null)
+            {
+                json = Encoding.UTF8.GetString(encoding.GetBytes(json));
+            }
             return JsonSerializer.Deserialize<T>(json, jsonSerializerOptions);
         }
 

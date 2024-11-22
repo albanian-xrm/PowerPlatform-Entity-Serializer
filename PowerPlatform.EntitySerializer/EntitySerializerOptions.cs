@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.Json;
 
 namespace AlbanianXrm.PowerPlatform
@@ -14,6 +15,8 @@ namespace AlbanianXrm.PowerPlatform
         public WriteSchemaOptions WriteSchema { get { return _WriteSchema; } set { writingSchema = value == WriteSchemaOptions.Always; _WriteSchema = value; } }
 
         public JsonSerializerOptions JsonSerializerOptions { get; set; } = new JsonSerializerOptions();
+
+        public Encoding EncodingToCorrect { get; set; } = default;
 
         public HashSet<string> KnowGuidAttributes { get { return _KnownGuidAttributes; } }
 

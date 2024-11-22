@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -50,24 +49,26 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     var propertyName = reader.GetString();
                     reader.Read();
-                    switch (propertyName)
+                    if (EntitySerializer.CollectionKeyPropertyName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        case EntitySerializer.CollectionKeyPropertyName:
-                            itemKey = reader.GetString();
-                            break;
-                        case EntitySerializer.CollectionValuePropertyName:
-                            if (reader.TokenType == JsonTokenType.StartArray) // Choices
-                            {
-                                InitializeOptionSetValueCollectionConverter();
-                                itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
-                                reader.Read();
-                                break;
-                            }
+                        itemKey = reader.GetString();
+                    }
+                    else if (EntitySerializer.CollectionValuePropertyName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        if (reader.TokenType == JsonTokenType.StartArray) // Choices
+                        {
+                            InitializeOptionSetValueCollectionConverter();
+                            itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
+                        }
+                        else
+                        {
                             itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter, itemKey);
-                            reader.Read();
-                            break;
-                        default:
-                            throw new JsonException();
+                        }
+                        reader.Read();
+                    }
+                    else
+                    {
+                        throw new JsonException();
                     }
                 }
                 if (reader.TokenType != JsonTokenType.EndObject)
