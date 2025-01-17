@@ -88,22 +88,29 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, ColumnSet value, JsonSerializerOptions options)
         {
-            writer.WriteStartObject();
-            if (entitySerializerOptions.writingSchema)
+            if (value == null)
             {
-                writer.WriteString(EntitySerializer.TypePropertyName, GetTypeSchema());
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartObject();
+            if (entitySerializerOptions.writingSchema && entitySerializerOptions.WriteSchema != WriteSchemaOptions.IfNeeded)
+            {
+                writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             }
             writer.WriteBoolean(nameof(value.AllColumns), value.AllColumns);
-            writer.WriteStartArray(nameof(value.Columns));
-            foreach (var column in value.Columns)
-            {
-                writer.WriteStringValue(column);
-            }
-            writer.WriteEndArray();
+
             writer.WriteStartArray(nameof(value.AttributeExpressions));
             foreach (var attributeExpression in value.AttributeExpressions)
             {
                 JsonSerializer.Serialize(writer, attributeExpression, options);
+            }
+            writer.WriteEndArray();
+
+            writer.WriteStartArray(nameof(value.Columns));
+            foreach (var column in value.Columns)
+            {
+                writer.WriteStringValue(column);
             }
             writer.WriteEndArray();
             writer.WriteEndObject();

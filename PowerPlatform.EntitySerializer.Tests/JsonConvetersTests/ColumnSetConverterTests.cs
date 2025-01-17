@@ -42,14 +42,14 @@ namespace JsonConvertersTests
         {
             var entitySerializerOptions = new EntitySerializerOptions()
             {
-                WriteSchema = WriteSchemaOptions.Never
+                WriteSchema = WriteSchemaOptions.IfNeeded
             };
             // Arrange
             var columnSet = new ColumnSet(true);
             columnSet.AddColumn("column1");
             columnSet.AddColumn("column2");
             columnSet.AddColumn("column3");
-            var json = "{\"AllColumns\":true,\"Columns\":[\"column1\",\"column2\",\"column3\"],\"AttributeExpressions\":[]}";
+            var json = "{\"AllColumns\":true,\"AttributeExpressions\":[],\"Columns\":[\"column1\",\"column2\",\"column3\"]}";
             // Act
             var entitySerializer = EntitySerializer.Serialize(columnSet, typeof(ColumnSet), entitySerializerOptions);
             // Assert
@@ -72,7 +72,7 @@ namespace JsonConvertersTests
             columnSet.AttributeExpressions.Add(new XrmAttributeExpression("attribute2", XrmAggregateType.Sum, "alias2"));
             columnSet.AttributeExpressions.Add(new XrmAttributeExpression("attribute3", XrmAggregateType.Avg, "alias3") { HasGroupBy = true });
             columnSet.AttributeExpressions.Add(new XrmAttributeExpression("attribute4", XrmAggregateType.Max, "alias4", XrmDateTimeGrouping.Month));
-            var json = "{\"AllColumns\":true,\"Columns\":[\"column1\",\"column2\",\"column3\"],\"AttributeExpressions\":[{\"AttributeName\":\"attribute1\",\"AggregateType\":0,\"Alias\":null,\"HasGroupBy\":false,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute2\",\"AggregateType\":3,\"Alias\":\"alias2\",\"HasGroupBy\":false,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute3\",\"AggregateType\":4,\"Alias\":\"alias3\",\"HasGroupBy\":true,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute4\",\"AggregateType\":6,\"Alias\":\"alias4\",\"HasGroupBy\":false,\"DateTimeGrouping\":3,\"ExtensionData\":null}]}";
+            var json = "{\"AllColumns\":true,\"AttributeExpressions\":[{\"AttributeName\":\"attribute1\",\"AggregateType\":0,\"Alias\":null,\"HasGroupBy\":false,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute2\",\"AggregateType\":3,\"Alias\":\"alias2\",\"HasGroupBy\":false,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute3\",\"AggregateType\":4,\"Alias\":\"alias3\",\"HasGroupBy\":true,\"DateTimeGrouping\":0,\"ExtensionData\":null},{\"AttributeName\":\"attribute4\",\"AggregateType\":6,\"Alias\":\"alias4\",\"HasGroupBy\":false,\"DateTimeGrouping\":3,\"ExtensionData\":null}],\"Columns\":[\"column1\",\"column2\",\"column3\"]}";
             // Act
             var entitySerializer = EntitySerializer.Serialize(columnSet, typeof(ColumnSet), entitySerializerOptions);
             var jsonSerializer = JsonSerializer.Serialize(columnSet);

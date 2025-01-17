@@ -28,7 +28,37 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, FilterExpression value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            writer.WriteStartObject();
+
+            writer.WritePropertyName(nameof(FilterExpression.Conditions));
+            writer.WriteStartArray();
+            foreach (var condition in value.Conditions)
+            {
+                JsonSerializer.Serialize(writer, condition, options);
+            }
+            writer.WriteEndArray();
+
+            writer.WritePropertyName(nameof(FilterExpression.FilterOperator));
+            writer.WriteNumberValue((int)value.FilterOperator);
+
+            writer.WritePropertyName(nameof(FilterExpression.Filters));
+            writer.WriteStartArray();
+            foreach (var filter in value.Filters)
+            {
+                JsonSerializer.Serialize(writer, filter, options);
+            }
+            writer.WriteEndArray();
+            if (value.IsQuickFindFilter == true) {
+                writer.WritePropertyName(nameof(FilterExpression.IsQuickFindFilter));
+            }
+
+            if (value.FilterHint != null)
+            {
+                writer.WritePropertyName(nameof(FilterExpression.FilterHint));
+                writer.WriteStringValue(value.FilterHint);
+            }
+
+            writer.WriteEndObject();
         }
 
         public object ReadInternal(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

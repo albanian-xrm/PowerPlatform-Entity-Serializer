@@ -33,7 +33,82 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, LinkEntity value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartObject();
+
+            if (value.Columns != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.Columns));
+                JsonSerializer.Serialize(writer, value.Columns, options);
+            }
+
+            if (value.EntityAlias != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.EntityAlias));
+                writer.WriteStringValue(value.EntityAlias);
+            }
+
+            writer.WritePropertyName(nameof(LinkEntity.JoinOperator));
+            writer.WriteNumberValue((int)value.JoinOperator);
+
+            if (value.LinkCriteria != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkCriteria));
+                JsonSerializer.Serialize(writer, value.LinkCriteria, options);
+            }
+
+            if (value.LinkFromAttributeName != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkFromAttributeName));
+                writer.WriteStringValue(value.LinkFromAttributeName);
+            }
+
+            if (value.LinkFromEntityName != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkFromEntityName));
+                writer.WriteStringValue(value.LinkFromEntityName);
+            }
+
+            if (value.LinkToAttributeName != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkToAttributeName));
+                writer.WriteStringValue(value.LinkToAttributeName);
+            }
+
+            if (value.LinkToEntityName != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkToEntityName));
+                writer.WriteStringValue(value.LinkToEntityName);
+            }
+
+            if (value.LinkEntities != null && value.LinkEntities.Count > 0)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.LinkEntities));
+                writer.WriteStartArray();
+                foreach (var linkEntity in value.LinkEntities)
+                {
+                    JsonSerializer.Serialize(writer, linkEntity, options);
+                }
+                writer.WriteEndArray();
+            }
+
+            if (value.ForceSeek != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.ForceSeek));
+                writer.WriteStringValue(value.ForceSeek);
+            }
+
+            if (value.ExtensionData != null)
+            {
+                writer.WritePropertyName(nameof(LinkEntity.ExtensionData));
+                JsonSerializer.Serialize(writer, value.ExtensionData, options);
+            }
+
+            writer.WriteEndObject();
         }
 
         public object ReadInternal(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -84,15 +159,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         case nameof(LinkEntity.LinkEntities):
                             if (reader.TokenType == JsonTokenType.StartArray)
                             {
-                                reader.Read();
-                                while (reader.TokenType != JsonTokenType.EndArray)
+                                while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
                                 {
                                     if (reader.TokenType != JsonTokenType.StartObject)
                                     {
                                         throw new JsonException("Expected StartObject token");
                                     }
                                     linkEntity.LinkEntities.Add((LinkEntity)ReadInternal(ref reader, typeof(LinkEntity), options));
-                                    reader.Read();
                                 }
                             }
                             break;
@@ -106,7 +179,6 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                             throw new NotImplementedException($"Unknown property \"{propertyName}\" for LinkEntity type.");
                     }
                 }
-                return linkEntity;
             }
 
             throw new JsonException("Expected EndObject token");

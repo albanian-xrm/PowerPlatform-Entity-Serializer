@@ -33,7 +33,34 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, ConditionExpression value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+            writer.WriteStartObject();
+
+            if (value.AttributeName != null)
+            {
+                writer.WriteString(nameof(ConditionExpression.AttributeName), value.AttributeName);
+            }
+
+            writer.WriteBoolean(nameof(ConditionExpression.CompareColumns), value.CompareColumns);
+            writer.WriteNumber(nameof(ConditionExpression.Operator), (int)value.Operator);
+            if (value.Values != null && value.Values.Count > 0)
+            {
+                writer.WritePropertyName(nameof(ConditionExpression.Values));
+                writer.WriteStartArray();
+                foreach (var val in value.Values)
+                {
+                    JsonSerializer.Serialize(writer, val, options);
+                }
+                writer.WriteEndArray();
+            }
+
+            writer.WriteString(nameof(ConditionExpression.EntityName), value.EntityName);
+
+            writer.WriteEndObject();
         }
 
         public object ReadInternal(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
