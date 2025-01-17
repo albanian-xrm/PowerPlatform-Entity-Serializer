@@ -496,5 +496,482 @@ namespace EntitySerializerTests
             Assert.NotNull(shko_choices);
             Assert.Contains(new OptionSetValue(342490002), shko_choices);
         }
+
+        [Fact]
+        public void DeserializeRemoteExecutionContextWithDocumentLocation()
+        {
+            var serializedContext = @"
+{
+    ""BusinessUnitId"": ""24e33957-e1a1-424e-943d-e8ce84c45633"",
+    ""CorrelationId"": ""01b84871-96b1-48e0-ada2-a31031966e3f"",
+    ""Depth"": 1,
+    ""InitiatingUserAzureActiveDirectoryObjectId"": ""00000000-0000-0000-0000-000000000000"",
+    ""InitiatingUserId"": ""30c91177-9436-4042-ad53-dd966d490114"",
+    ""InputParameters"": [
+        {
+            ""key"": ""Target"",
+            ""value"": {
+                ""__type"": ""Entity:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                ""Attributes"": [
+                    {
+                        ""key"": ""owningbusinessunit"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""24e33957-e1a1-424e-943d-e8ce84c45633"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""businessunit"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""modifiedonbehalfby"",
+                        ""value"": null
+                    },
+                    {
+                        ""key"": ""statecode"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 0
+                        }
+                    },
+                    {
+                        ""key"": ""locationtype"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 0
+                        }
+                    },
+                    {
+                        ""key"": ""relativeurl"",
+                        ""value"": ""Mini test""
+                    },
+                    {
+                        ""key"": ""createdby"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""30c91177-9436-4042-ad53-dd966d490114"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""systemuser"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""regardingobjectid"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""0a3839b3-08d4-ef11-aeb0-00155d000101"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""account"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""statuscode"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 1
+                        }
+                    },
+                    {
+                        ""key"": ""ownerid"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""30c91177-9436-4042-ad53-dd966d490114"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""systemuser"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""sharepointdocumentlocationid"",
+                        ""value"": ""1e3839b3-08d4-ef11-aeb0-00155d000101""
+                    },
+                    {
+                        ""key"": ""modifiedon"",
+                        ""value"": ""\/Date(1737031936000)\/""
+                    },
+                    {
+                        ""key"": ""owninguser"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""30c91177-9436-4042-ad53-dd966d490114"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""systemuser"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""modifiedby"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""30c91177-9436-4042-ad53-dd966d490114"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""systemuser"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""sitecollectionid"",
+                        ""value"": ""b40f92c3-c1cc-ef11-aeae-00155d000101""
+                    },
+                    {
+                        ""key"": ""createdon"",
+                        ""value"": ""\/Date(1737031936000)\/""
+                    },
+                    {
+                        ""key"": ""name"",
+                        ""value"": ""Documents on Default Site 1""
+                    },
+                    {
+                        ""key"": ""parentsiteorlocation"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""90fe6740-1cc1-e211-be17-000c29fb9e40"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""sharepointdocumentlocation"",
+                            ""Name"": null,
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""servicetype"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 0
+                        }
+                    }
+                ],
+                ""EntityState"": null,
+                ""FormattedValues"": [
+                    {
+                        ""key"": ""statecode"",
+                        ""value"": ""Active""
+                    },
+                    {
+                        ""key"": ""locationtype"",
+                        ""value"": ""General""
+                    },
+                    {
+                        ""key"": ""statuscode"",
+                        ""value"": ""Active""
+                    },
+                    {
+                        ""key"": ""modifiedon"",
+                        ""value"": ""2025-01-16T14:52:16+02:00""
+                    },
+                    {
+                        ""key"": ""createdon"",
+                        ""value"": ""2025-01-16T14:52:16+02:00""
+                    }
+                ],
+                ""Id"": ""1e3839b3-08d4-ef11-aeb0-00155d000101"",
+                ""KeyAttributes"": [],
+                ""LogicalName"": ""sharepointdocumentlocation"",
+                ""RelatedEntities"": [],
+                ""RowVersion"": null
+            }
+        }
+    ],
+    ""IsExecutingOffline"": false,
+    ""IsInTransaction"": false,
+    ""IsOfflinePlayback"": false,
+    ""IsolationMode"": 1,
+    ""MessageName"": ""Create"",
+    ""Mode"": 1,
+    ""OperationCreatedOn"": ""\/Date(1737024736000+0200)\/"",
+    ""OperationId"": ""203839b3-08d4-ef11-aeb0-00155d000101"",
+    ""OrganizationId"": ""f0aabb07-b0c9-4cfe-80be-8effd49bf067"",
+    ""OrganizationName"": ""ORG"",
+    ""OutputParameters"": [
+        {
+            ""key"": ""id"",
+            ""value"": ""1e3839b3-08d4-ef11-aeb0-00155d000101""
+        }
+    ],
+    ""OwningExtension"": {
+        ""Id"": ""ffd3ea1c-46ae-ef11-8a69-002248e53d94"",
+        ""KeyAttributes"": [],
+        ""LogicalName"": ""sdkmessageprocessingstep"",
+        ""Name"": null,
+        ""RowVersion"": null
+    },
+    ""ParentContext"": {
+        ""BusinessUnitId"": ""24e33957-e1a1-424e-943d-e8ce84c45633"",
+        ""CorrelationId"": ""01b84871-96b1-48e0-ada2-a31031966e3f"",
+        ""Depth"": 1,
+        ""InitiatingUserAzureActiveDirectoryObjectId"": ""00000000-0000-0000-0000-000000000000"",
+        ""InitiatingUserId"": ""30c91177-9436-4042-ad53-dd966d490114"",
+        ""InputParameters"": [
+            {
+                ""key"": ""Query"",
+                ""value"": {
+                    ""__type"": ""QueryExpression:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                    ""ColumnSet"": {
+                        ""AllColumns"": false,
+                        ""AttributeExpressions"": [],
+                        ""Columns"": [
+                            ""documentid"",
+                            ""fullname"",
+                            ""relativelocation"",
+                            ""sharepointcreatedon"",
+                            ""ischeckedout"",
+                            ""filetype"",
+                            ""modified"",
+                            ""sharepointmodifiedby"",
+                            ""servicetype"",
+                            ""absoluteurl"",
+                            ""title"",
+                            ""author"",
+                            ""sharepointdocumentid"",
+                            ""readurl"",
+                            ""editurl"",
+                            ""locationid"",
+                            ""iconclassname"",
+                            ""locationname""
+                        ]
+                    },
+                    ""Criteria"": {
+                        ""Conditions"": [
+                            {
+                                ""AttributeName"": ""isrecursivefetch"",
+                                ""CompareColumns"": false,
+                                ""Operator"": 0,
+                                ""Values"": [
+                                    false
+                                ],
+                                ""EntityName"": null
+                            },
+                            {
+                                ""AttributeName"": ""regardingobjecttypecode"",
+                                ""CompareColumns"": false,
+                                ""Operator"": 0,
+                                ""Values"": [
+                                    1
+                                ],
+                                ""EntityName"": null
+                            },
+                            {
+                                ""AttributeName"": ""regardingobjectid"",
+                                ""CompareColumns"": false,
+                                ""Operator"": 0,
+                                ""Values"": [
+                                    ""0a3839b3-08d4-ef11-aeb0-00155d000101""
+                                ],
+                                ""EntityName"": null
+                            }
+                        ],
+                        ""FilterOperator"": 0,
+                        ""Filters"": []
+                    },
+                    ""Distinct"": false,
+                    ""EntityName"": ""sharepointdocument"",
+                    ""LinkEntities"": [],
+                    ""Orders"": [
+                        {
+                            ""Alias"": null,
+                            ""AttributeName"": ""relativelocation"",
+                            ""OrderType"": 0
+                        }
+                    ],
+                    ""PageInfo"": {
+                        ""Count"": 10,
+                        ""PageNumber"": 1,
+                        ""PagingCookie"": null,
+                        ""ReturnTotalRecordCount"": true
+                    },
+                    ""NoLock"": false,
+                    ""QueryHints"": """"
+                }
+            },
+            {
+                ""key"": ""IsAppModuleContext"",
+                ""value"": false
+            },
+            {
+                ""key"": ""AppModuleId"",
+                ""value"": ""00000000-0000-0000-0000-000000000000""
+            }
+        ],
+        ""IsExecutingOffline"": false,
+        ""IsInTransaction"": false,
+        ""IsOfflinePlayback"": false,
+        ""IsolationMode"": 1,
+        ""MessageName"": ""Create"",
+        ""Mode"": 1,
+        ""OperationCreatedOn"": ""\/Date(1737024736000+0200)\/"",
+        ""OperationId"": ""203839b3-08d4-ef11-aeb0-00155d000101"",
+        ""OrganizationId"": ""f0aabb07-b0c9-4cfe-80be-8effd49bf067"",
+        ""OrganizationName"": ""ORG"",
+        ""OutputParameters"": [],
+        ""OwningExtension"": {
+            ""Id"": ""ffd3ea1c-46ae-ef11-8a69-002248e53d94"",
+            ""KeyAttributes"": [],
+            ""LogicalName"": ""sdkmessageprocessingstep"",
+            ""Name"": null,
+            ""RowVersion"": null
+        },
+        ""ParentContext"": null,
+        ""PostEntityImages"": [],
+        ""PreEntityImages"": [],
+        ""PrimaryEntityId"": ""1e3839b3-08d4-ef11-aeb0-00155d000101"",
+        ""PrimaryEntityName"": ""sharepointdocument"",
+        ""RequestId"": ""e28dd17d-f8ee-4830-849d-8f9441ecac76"",
+        ""SecondaryEntityName"": ""none"",
+        ""SharedVariables"": [
+            {
+                ""key"": ""IsAutoTransact"",
+                ""value"": false
+            }
+        ],
+        ""Stage"": 30,
+        ""UserAzureActiveDirectoryObjectId"": ""00000000-0000-0000-0000-000000000000"",
+        ""UserId"": ""30c91177-9436-4042-ad53-dd966d490114""
+    },
+    ""PostEntityImages"": [
+        {
+            ""key"": ""PostImage"",
+            ""value"": {
+                ""Attributes"": [
+                    {
+                        ""key"": ""name"",
+                        ""value"": ""Documents on Default Site 1""
+                    },
+                    {
+                        ""key"": ""ownerid"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""30c91177-9436-4042-ad53-dd966d490114"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""systemuser"",
+                            ""Name"": ""Name"",
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""parentsiteorlocation"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""90fe6740-1cc1-e211-be17-000c29fb9e40"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""sharepointdocumentlocation"",
+                            ""Name"": ""account"",
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""regardingobjectid"",
+                        ""value"": {
+                            ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Id"": ""0a3839b3-08d4-ef11-aeb0-00155d000101"",
+                            ""KeyAttributes"": [],
+                            ""LogicalName"": ""account"",
+                            ""Name"": ""Mini test"",
+                            ""RowVersion"": null
+                        }
+                    },
+                    {
+                        ""key"": ""relativeurl"",
+                        ""value"": ""Mini test""
+                    },
+                    {
+                        ""key"": ""sharepointdocumentlocationid"",
+                        ""value"": ""1e3839b3-08d4-ef11-aeb0-00155d000101""
+                    },
+                    {
+                        ""key"": ""statecode"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 0
+                        }
+                    },
+                    {
+                        ""key"": ""statuscode"",
+                        ""value"": {
+                            ""__type"": ""OptionSetValue:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                            ""Value"": 1
+                        }
+                    }
+                ],
+                ""EntityState"": null,
+                ""FormattedValues"": [
+                    {
+                        ""key"": ""ownerid"",
+                        ""value"": ""Name""
+                    },
+                    {
+                        ""key"": ""parentsiteorlocation"",
+                        ""value"": ""account""
+                    },
+                    {
+                        ""key"": ""regardingobjectid"",
+                        ""value"": ""Mini test""
+                    },
+                    {
+                        ""key"": ""statecode"",
+                        ""value"": ""Active""
+                    },
+                    {
+                        ""key"": ""statuscode"",
+                        ""value"": ""Active""
+                    }
+                ],
+                ""Id"": ""1e3839b3-08d4-ef11-aeb0-00155d000101"",
+                ""KeyAttributes"": [],
+                ""LogicalName"": ""sharepointdocumentlocation"",
+                ""RelatedEntities"": [],
+                ""RowVersion"": null
+            }
+        },
+        {
+            ""key"": ""AsynchronousStepPrimaryName"",
+            ""value"": {
+                ""Attributes"": [
+                    {
+                        ""key"": ""name"",
+                        ""value"": ""Documents on Default Site 1""
+                    },
+                    {
+                        ""key"": ""sharepointdocumentlocationid"",
+                        ""value"": ""1e3839b3-08d4-ef11-aeb0-00155d000101""
+                    }
+                ],
+                ""EntityState"": null,
+                ""FormattedValues"": [],
+                ""Id"": ""1e3839b3-08d4-ef11-aeb0-00155d000101"",
+                ""KeyAttributes"": [],
+                ""LogicalName"": ""sharepointdocumentlocation"",
+                ""RelatedEntities"": [],
+                ""RowVersion"": null
+            }
+        }
+    ],
+    ""PreEntityImages"": [],
+    ""PrimaryEntityId"": ""1e3839b3-08d4-ef11-aeb0-00155d000101"",
+    ""PrimaryEntityName"": ""sharepointdocumentlocation"",
+    ""RequestId"": ""e28dd17d-f8ee-4830-849d-8f9441ecac76"",
+    ""SecondaryEntityName"": ""none"",
+    ""SharedVariables"": [
+        {
+            ""key"": ""IsAutoTransact"",
+            ""value"": true
+        },
+        {
+            ""key"": ""DefaultsAddedFlag"",
+            ""value"": true
+        }
+    ],
+    ""Stage"": 40,
+    ""UserAzureActiveDirectoryObjectId"": ""00000000-0000-0000-0000-000000000000"",
+    ""UserId"": ""30c91177-9436-4042-ad53-dd966d490114""
+}
+";
+            var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(serializedContext);
+        }
     }
 }
