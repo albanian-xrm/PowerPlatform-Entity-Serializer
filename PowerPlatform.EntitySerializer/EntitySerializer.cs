@@ -1,5 +1,6 @@
 ﻿using AlbanianXrm.PowerPlatform.JsonConverters;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,37 +44,42 @@ namespace AlbanianXrm.PowerPlatform
 
         public static async ValueTask<T> DeserializeAsync<T>(Stream sourceStream, EntitySerializerOptions options = default, CancellationToken cancellationToken = default)
         {
-            // Initialize source and target encodings
-            Encoding sourceEncoding = Encoding.GetEncoding(1252);
-            Encoding targetEncoding = Encoding.UTF8;
+            // Deserialize from the UTF-8 encoded memory stream
+            var jsonSerializerOptions = InitializeOptions(options);
 
-            // Create a target memory stream for the UTF-8 encoded data
-            using (var utf8MemoryStream = new MemoryStream())
+            var sourceEncoding = options?.EncodingToCorrect;
+            if (sourceEncoding != null)
             {
-                // Read from the source stream with Windows-1252 encoding and write to the UTF-8 memory stream
-                using (var reader = new StreamReader(sourceStream))
-                using (var writer = new StreamWriter(utf8MemoryStream, targetEncoding, bufferSize: 1024, leaveOpen: true))
+                Encoding targetEncoding = Encoding.UTF8;
+
+                // Create a target memory stream for the UTF-8 encoded data
+                using (var utf8MemoryStream = new MemoryStream())
                 {
-                    char[] buffer = new char[1024];
-                    int charsRead;
-
-                    while ((charsRead = await reader.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    // Read from the source stream with Windows-1252 encoding and write to the UTF-8 memory stream
+                    using (var reader = new StreamReader(sourceStream))
+                    using (var writer = new StreamWriter(utf8MemoryStream, targetEncoding, bufferSize: 1024, leaveOpen: true))
                     {
-                        //deserialize buffer from sourceEncoding
-                        byte[] bytes = sourceEncoding.GetBytes(buffer, 0, charsRead);
-                        var targetBuffer = targetEncoding.GetChars(bytes);
-                        await writer.WriteAsync(targetBuffer, 0, targetBuffer.Length);
+                        char[] buffer = new char[1024];
+                        int charsRead;
+
+                        while ((charsRead = await reader.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            //deserialize buffer from sourceEncoding
+                            byte[] bytes = sourceEncoding.GetBytes(buffer, 0, charsRead);
+                            var targetBuffer = targetEncoding.GetChars(bytes);
+                            await writer.WriteAsync(targetBuffer, 0, targetBuffer.Length);
+                        }
+                        await writer.FlushAsync(); // Ensure all data is written
                     }
-                    await writer.FlushAsync(); // Ensure all data is written
+
+                    // Reset position in memory stream for deserialization
+                    utf8MemoryStream.Position = 0;
+
+                    return await JsonSerializer.DeserializeAsync<T>(utf8MemoryStream, jsonSerializerOptions, cancellationToken);
                 }
-
-                // Reset position in memory stream for deserialization
-                utf8MemoryStream.Position = 0;
-
-                // Deserialize from the UTF-8 encoded memory stream
-                var jsonSerializerOptions = InitializeOptions(options);
-                return await JsonSerializer.DeserializeAsync<T>(utf8MemoryStream, jsonSerializerOptions, cancellationToken);
             }
+
+            return await JsonSerializer.DeserializeAsync<T>(sourceStream, jsonSerializerOptions, cancellationToken);
         }
 
         public static string Serialize(object value, Type inputType, EntitySerializerOptions options = default)
@@ -93,21 +99,26 @@ namespace AlbanianXrm.PowerPlatform
             foreach (var item in jsonSerializerOptions.Converters)
             {
                 if (CanConvert<AttributeCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<ColumnSet>(item, entitySerializerOptions.converters) ||
+                    CanConvert<ConditionExpression>(item, entitySerializerOptions.converters) ||
                     CanConvert<DateTime>(item, entitySerializerOptions.converters) ||
                     CanConvert<EntityCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Entity>(item, entitySerializerOptions.converters) ||
                     CanConvert<EntityImageCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<EntityReference>(item, entitySerializerOptions.converters) ||
+                    CanConvert<FilterExpression>(item, entitySerializerOptions.converters) ||
                     CanConvert<FormattedValueCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Guid>(item, entitySerializerOptions.converters) ||
                     CanConvert<KeyAttributeCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<IList<object>>(item, entitySerializerOptions.converters) ||
                     CanConvert<IList<Entity>>(item, entitySerializerOptions.converters) ||
+                    CanConvert<LinkEntity>(item, entitySerializerOptions.converters) ||
                     CanConvert<Money>(item, entitySerializerOptions.converters) ||
                     CanConvert<object>(item, entitySerializerOptions.converters) ||
                     CanConvert<OptionSetValue>(item, entitySerializerOptions.converters) ||
                     CanConvert<OptionSetValueCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<ParameterCollection>(item, entitySerializerOptions.converters) ||
+                    CanConvert<QueryExpression>(item, entitySerializerOptions.converters) ||
                     CanConvert<RelatedEntityCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Relationship>(item, entitySerializerOptions.converters) ||
                     CanConvert<RemoteExecutionContext>(item, entitySerializerOptions.converters))
@@ -136,6 +147,16 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new AttributeCollectionConverter(entitySerializerOptions)));
             }
+            if (!entitySerializerOptions.converters.CanConvertType<ColumnSet>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ColumnSetConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<ConditionExpression>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new ConditionExpressionConverter(entitySerializerOptions)));
+            }
             if (!entitySerializerOptions.converters.CanConvertType<DateTime>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
@@ -161,6 +182,11 @@ namespace AlbanianXrm.PowerPlatform
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new EntityReferenceConverter(entitySerializerOptions)));
             }
+            if (!entitySerializerOptions.converters.CanConvertType<FilterExpression>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new FilterExpressionConverter(entitySerializerOptions)));
+            }
             if (!entitySerializerOptions.converters.CanConvertType<FormattedValueCollection>())
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
@@ -180,6 +206,11 @@ namespace AlbanianXrm.PowerPlatform
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new KeyAttributeCollectionConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<LinkEntity>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new LinkEntityConverter(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<IList<object>>())
             {
@@ -210,6 +241,11 @@ namespace AlbanianXrm.PowerPlatform
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new ParameterCollectionConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<QueryExpression>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new QueryExpressionConverter(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<Relationship>())
             {

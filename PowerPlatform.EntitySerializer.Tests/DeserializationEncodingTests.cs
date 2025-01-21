@@ -714,7 +714,10 @@ namespace AlbanianXrm.PowerPlatform
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
             {
-                var remoteExecutionContext = await EntitySerializer.DeserializeAsync<RemoteExecutionContext>(stream);
+                var remoteExecutionContext = await EntitySerializer.DeserializeAsync<RemoteExecutionContext>(stream, new EntitySerializerOptions()
+                {
+                    EncodingToCorrect = Encoding.GetEncoding(1252)
+                });
 
                 Assert.NotNull(remoteExecutionContext);
                 Assert.NotNull(remoteExecutionContext.InputParameters);

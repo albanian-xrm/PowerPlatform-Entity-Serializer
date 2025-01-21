@@ -15,7 +15,7 @@
 		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
 		<releaseNotes>
 			v$version$:
-			- Added Known Guid Attributes option 
+			- Make QueryExpression Deserializable/Serializable (thnx. Jānis Veinbergs)
 		</releaseNotes>
 		<copyright>Copyright 2024</copyright>
 		<tags>Xrm AlbanianXrm Dataverse JSON</tags>

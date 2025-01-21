@@ -44,6 +44,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 return reader.GetInt32();
             }
+            if (reader.TokenType == JsonTokenType.Number)
+            {
+                return reader.GetInt32();
+            }
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
                 reader.Read();

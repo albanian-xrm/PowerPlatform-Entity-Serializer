@@ -75,6 +75,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             }
         }
 
+        public static string ConvertToString(DateTime dateTime)
+        {
+            var milliseconds = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds;
+            var offset = dateTime.ToString("zzz").Replace(":", "");
+            return $"/Date({milliseconds}{offset})/";
+        }
+
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

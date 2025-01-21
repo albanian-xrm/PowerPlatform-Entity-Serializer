@@ -133,8 +133,51 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
-            writer.WriteStartObject();
-            writer.WriteEndObject();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
+            switch (value)
+            {
+                case bool boolValue:
+                    writer.WriteBooleanValue(boolValue);
+                    break;
+                case int intValue:
+                    writer.WriteNumberValue(intValue);
+                    break;
+                case decimal decimalValue:
+                    writer.WriteNumberValue(decimalValue);
+                    break;
+                case string stringValue:
+                    writer.WriteStringValue(stringValue);
+                    break;
+                case Guid guidValue:
+                    writer.WriteStringValue(guidValue);
+                    break;
+                case DateTime dateTimeValue:
+                    writer.WriteStringValue(DateTimeConverter.ConvertToString(dateTimeValue));
+                    break;
+                case IList<object> listValue:
+                    JsonConverter<IList<object>> listConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
+                    listConverter.Write(writer, listValue, options);
+                    break;
+                case Dictionary<string, object> dictValue:
+                    writer.WriteStartObject();
+                    foreach (var kvp in dictValue)
+                    {
+                        writer.WritePropertyName(kvp.Key);
+                        Write(writer, kvp.Value, options);
+                    }
+                    writer.WriteEndObject();
+                    break;
+                case null:
+                    writer.WriteNullValue();
+                    break;
+                default:
+                    throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+            }
         }
     }
 }
