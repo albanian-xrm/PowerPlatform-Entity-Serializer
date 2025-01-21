@@ -101,6 +101,7 @@ steps:
     packagesToPack: PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec
     versioningScheme: byEnvVar
     versionEnvVar: MyVars.BuildNumber
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - task: CopyFiles@2
   displayName: 'Preparing NuGet packages'
@@ -114,3 +115,4 @@ steps:
   inputs:
     pathToPublish:  '$(Build.ArtifactStagingDirectory)\NuGets'
     ArtifactName: 'NuGets' 
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
