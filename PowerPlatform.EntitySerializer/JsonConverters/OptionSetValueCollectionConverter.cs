@@ -75,6 +75,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             }
 
             if (optionSetValueConverter == null) optionSetValueConverter = entitySerializerOptions.converters.GetForType<OptionSetValue>();
+            writer.WriteStartArray();
             foreach (var optionSetValue in value)
             {
                 optionSetValueConverter.Write(writer, optionSetValue, options);

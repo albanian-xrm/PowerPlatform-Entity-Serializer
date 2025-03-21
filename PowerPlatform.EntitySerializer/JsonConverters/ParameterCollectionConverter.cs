@@ -44,7 +44,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     var propertyName = reader.GetString();
                     reader.Read();
-                    switch (propertyName)
+                    switch (propertyName.ToLower())
                     {
                         case EntitySerializer.CollectionKeyPropertyName:
                             itemKey = reader.GetString();

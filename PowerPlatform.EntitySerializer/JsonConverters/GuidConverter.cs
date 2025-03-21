@@ -66,7 +66,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)
         {
-            if (entitySerializerOptions.writingSchema)
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = false;
+            }
+            if (writingSchema)
             {
                 writer.WriteStartObject();
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
@@ -77,6 +82,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             {
                 writer.WriteStringValue(value);
             }
+            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

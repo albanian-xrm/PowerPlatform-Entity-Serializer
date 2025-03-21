@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -78,8 +77,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public static string ConvertToString(DateTime dateTime)
         {
             var milliseconds = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds;
-            var offset = dateTime.ToString("zzz").Replace(":", "");
-            return $"/Date({milliseconds}{offset})/";
+            return $"/Date({milliseconds})/";
         }
 
 
@@ -116,18 +114,19 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
+            var stringValue = entitySerializerOptions.DateOptions == DateOptions.SerializeXrmDate ? ConvertToString(value) : value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             if (entitySerializerOptions.writingSchema)
             {
                 writer.WriteStartObject();
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-                writer.WriteString(EntitySerializer.ValuePropertyName, value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                writer.WriteString(EntitySerializer.ValuePropertyName, stringValue);
                 writer.WriteEndObject();
             }
             else
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                
+                writer.WriteStringValue(stringValue);
             }
-
         }
     }
 }

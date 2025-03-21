@@ -125,7 +125,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, Entity value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            if (entitySerializerOptions.writingSchema)
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = true;
+            }
+            if (writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             }
@@ -134,6 +139,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             if (value.EntityState.HasValue)
             {
                 writer.WriteNumber(nameof(value.EntityState), (int)value.EntityState);
+            } else
+            {
+                writer.WriteNull(nameof(value.EntityState));
             }
             if (formattedValueCollectionConverter == null) formattedValueCollectionConverter = entitySerializerOptions.converters.GetForType<FormattedValueCollection>();
             Serialize(writer, options, formattedValueCollectionConverter, nameof(value.FormattedValues), value.FormattedValues);
@@ -163,24 +171,18 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             if (value.RowVersion != null)
             {
                 writer.WriteString(nameof(value.RowVersion), value.RowVersion);
+            } else
+            {
+                writer.WriteNull(nameof(value.RowVersion));
             }
             writer.WriteEndObject();
+            entitySerializerOptions.writingSchema = writingSchema;
         }
 
         private void Serialize<T>(Utf8JsonWriter writer, JsonSerializerOptions options, JsonConverter<T> converter, string propertyName, T value)
         {
-            var writingSchema = entitySerializerOptions.writingSchema;
-            if (writingSchema)
-            {
-                writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-            }
-            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
-            {
-                entitySerializerOptions.writingSchema = true;
-            }
             writer.WritePropertyName(propertyName);
             converter.Write(writer, value, options);
-            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

@@ -90,7 +90,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, EntityReference value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            if (entitySerializerOptions.writingSchema)
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = true;
+            }
+            if (entitySerializerOptions.writingSchema || writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             };
@@ -107,6 +112,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             writer.WriteString(nameof(value.RowVersion), value.RowVersion);
 
             writer.WriteEndObject();
+            entitySerializerOptions.writingSchema = writingSchema;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
