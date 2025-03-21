@@ -1,13 +1,21 @@
 ﻿using AlbanianXrm.PowerPlatform;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Diagnostics;
 using System.Text.Json;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace JsonConvertersTests
 {
     public class ObjectConverterTests
     {
+        private readonly ITestOutputHelper _output;
+        public ObjectConverterTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
         [Fact]
         public void DateDeserialize()
         {
@@ -93,6 +101,20 @@ namespace JsonConvertersTests
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
             Assert.Equal("{\"__type\":\"DateTime:#System\",\"__value\":\"2018-05-31T09:05:24.000Z\"}", serializedDate);
+        }
+
+
+        [Fact]
+        public void SerializeEnum()
+        {
+            var entitySerializerOptions = new EntitySerializerOptions();
+            var request = new UpdateRequest()
+            {
+                ConcurrencyBehavior = ConcurrencyBehavior.IfRowVersionMatches
+            };
+            string serializedValue = EntitySerializer.Serialize(request.Parameters, typeof(ParameterCollection), entitySerializerOptions);
+            _output.WriteLine(serializedValue);
+            Assert.Equal("[{\"key\":\"Target\",\"value\":null},{\"key\":\"ConcurrencyBehavior\",\"value\":\"IfRowVersionMatches\"}]", serializedValue);
         }
     }
 }

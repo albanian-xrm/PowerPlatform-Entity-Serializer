@@ -254,8 +254,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 case null:
                     writer.WriteNullValue();
                     break;
-                default:
-                    throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+                case Enum enumValue:
+                    writer.WriteStringValue(enumValue.ToString());
+                    break;
+                //default:
+                    //Skip unknown types
+                    //throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
             }
         }
     }
