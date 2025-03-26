@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ServiceModel;
 using System.Text;
 using System.Text.Json;
 
@@ -23,5 +24,7 @@ namespace AlbanianXrm.PowerPlatform
         public Dictionary<string, object> UnknownPropertiesLastSerialization = new Dictionary<string, object>();
 
         public DateOptions DateOptions { get; set; } = DateOptions.SerializeIsoDate;
+
+        public Strictness Strictness { get; set; } = Strictness.Strict;
     }
 }

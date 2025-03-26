@@ -62,7 +62,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.RowVersion = reader.GetString();
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        if (entitySerializerOptions.Strictness == Strictness.Strict)
+                        {
+                            throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        } else {
+                            reader.Skip();
+                            break;
+                        }
                 }
                 if (!reader.Read())
                 {

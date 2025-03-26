@@ -131,7 +131,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         return (int)decimalResult;
                     }
                 default:
-                    throw new JsonException();
+                    if (entitySerializerOptions.Strictness == Strictness.Strict)
+                    {
+                        throw new JsonException($"We don't know how to handle value of type {reader.TokenType}");
+                    }
+                    else
+                    {
+                        return null;
+                    }
             }
         }
 
@@ -260,9 +267,16 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 case Enum enumValue:
                     writer.WriteStringValue(enumValue.ToString());
                     break;
-                //default:
-                    //Skip unknown types
-                    //throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+                default:
+                    if (entitySerializerOptions.Strictness == Strictness.Strict)
+                    {
+                        throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+                    }
+                    else
+                    {
+                        writer.WriteNullValue();
+                        break;
+                    }
             }
         }
     }

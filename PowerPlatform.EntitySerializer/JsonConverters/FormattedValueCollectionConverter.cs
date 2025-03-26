@@ -44,7 +44,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                             itemKey = reader.GetString();
                             break;
                         case EntitySerializer.CollectionValuePropertyName:
-                            if (reader.TokenType != JsonTokenType.String) throw new JsonException();
+                            if (reader.TokenType != JsonTokenType.String) throw new JsonException($"FormattedValueCollection value property expected to be String, was: {reader.TokenType}");
                             itemValue = reader.GetString();
                             reader.Read();
                             break;
