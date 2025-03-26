@@ -125,8 +125,11 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     return stringResult;
                 case JsonTokenType.Number:
                     var decimalResult = reader.GetDecimal();
-                    if (decimalResult % 1 == 0) return (int)decimalResult;
-                    return decimalResult;
+                    if (reader.ValueSpan.IndexOf((byte)'.') >= 0 || decimalResult % 1 != 0) {
+                        return decimalResult;
+                    } else {
+                        return (int)decimalResult;
+                    }
                 default:
                     throw new JsonException();
             }
