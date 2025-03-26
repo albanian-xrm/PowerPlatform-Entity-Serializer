@@ -19,22 +19,37 @@ namespace JsonConvertersTests
             this.output = output;
         }
 
-
         [Fact]
-        public void SerializeParameterCollectionWithUnknownType_Strict_Throw()
+        public void SerializeParameterCollectionWithDictionaryStringString()
         {
-            var dict = new ConcurrentDictionary<string, string>();
-            dict.TryAdd("activityparty", "Create");
-            dict.TryAdd("actioncard", "Update");
-            dict.TryAdd("principalobjectaccess", "Update");
-
             var parameterCollection = new ParameterCollection()
             {
-                { "Unsupported", dict }
+                { "ChangedEntityTypes", new Dictionary<string, string>() {
+                    { "activityparty", "Create" },
+                    { "actioncard", "Update" },
+                    { "principalobjectaccess", "Update" }
+                } }
             };
             var entitySerializerOptions = new EntitySerializerOptions()
             {
                 WriteSchema = WriteSchemaOptions.IfNeeded,
+                Strictness = Strictness.Strict,
+            };
+            var serialized = EntitySerializer.Serialize(parameterCollection, typeof(ParameterCollection), entitySerializerOptions);
+            output.WriteLine(serialized);
+            var deserialized = EntitySerializer.Deserialize<ParameterCollection>(serialized, entitySerializerOptions);
+            Assert.Equivalent(parameterCollection, deserialized, true);
+        }
+
+        [Fact]
+        public void SerializeParameterCollectionWithUnknownType_Strict_Throw()
+        {
+            var parameterCollection = new ParameterCollection()
+            {
+                { "Unsupported", new TimeSpan() }
+            };
+            var entitySerializerOptions = new EntitySerializerOptions()
+            {
                 Strictness = Strictness.Strict,
             };
             Assert.Throws<JsonException>(() => EntitySerializer.Serialize(parameterCollection, typeof(ParameterCollection), entitySerializerOptions));
@@ -43,18 +58,13 @@ namespace JsonConvertersTests
         [Fact]
         public void SerializeParameterCollectionWithUnknownType_Loose_Null()
         {
-            var dict = new ConcurrentDictionary<string, string>();
-            dict.TryAdd("activityparty", "Create");
-            dict.TryAdd("actioncard", "Update");
-            dict.TryAdd("principalobjectaccess", "Update");
-
             var parameterCollection = new ParameterCollection()
             {
-                { "Unsupported", dict }
+                { "Unsupported", new TimeSpan() }
             };
             var entitySerializerOptions = new EntitySerializerOptions()
             {
-                WriteSchema = WriteSchemaOptions.IfNeeded,
+                WriteSchema = WriteSchemaOptions.Never,
                 Strictness = Strictness.Loose,
             };
             var serialized = EntitySerializer.Serialize(parameterCollection, typeof(ParameterCollection), entitySerializerOptions);

@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -12,6 +13,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private readonly Dictionary<string, IObjectContractConverter> schemaBindings = new Dictionary<string, IObjectContractConverter>();
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<IList<object>> listOfObjectsConverter;
+        private JsonConverter<KeyValuePair<string, string>> kvpStringStringConverter;
 
         public ObjectContractConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -111,7 +113,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     return objectConverter.Read(ref reader, typeof(object), options);
                 case JsonTokenType.StartArray:
                     if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
-                    return listOfObjectsConverter.Read(ref reader, typeof(IList<object>), options);
+                    var collection = listOfObjectsConverter.Read(ref reader, typeof(ICollection<object>), options);
+                    ///SharedVariables may contain ChangedEntityTypes which is actually a Dictionary and not a List
+                    if (collection.All(x => x?.GetType() == typeof(KeyValuePair<string, string>)))
+                    {
+                        return collection.Cast<KeyValuePair<string, string>>().ToDictionary(x => x.Key, x => x.Value);
+                    }
+                    return collection;
                 case JsonTokenType.String:
                     if (itemKey != null && entitySerializerOptions.KnowGuidAttributes.Contains(itemKey))
                     {
@@ -172,6 +180,15 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     var dateTimeConverter = entitySerializerOptions.converters.GetForType<DateTime>();
                     dateTimeConverter.Write(writer, dateTimeValue, options);
                     break;
+                case ICollection<KeyValuePair<string, string>> collection:
+                    writer.WriteStartArray();
+                    if (kvpStringStringConverter == null) kvpStringStringConverter = entitySerializerOptions.converters.GetForType<KeyValuePair<string, string>>();
+                    foreach (var item in collection)
+                    {
+                        kvpStringStringConverter.Write(writer, item, options);
+                    }
+                    writer.WriteEndArray();
+                    break;
                 case IList<object> listValue:
                     JsonConverter<IList<object>> listConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
                     listConverter.Write(writer, listValue, options);
@@ -184,6 +201,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         Write(writer, kvp.Value, options);
                     }
                     writer.WriteEndObject();
+                    break;
+                case KeyValuePair<string, string> kvp:
+                    if (kvpStringStringConverter == null) kvpStringStringConverter = entitySerializerOptions.converters.GetForType<KeyValuePair<string, string>>();
+                    kvpStringStringConverter.Write(writer, kvp, options);
                     break;
                 case AttributeCollection attributeCollectionValue:
                     JsonConverter<AttributeCollection> attributeCollectionConverter = entitySerializerOptions.converters.GetForType<AttributeCollection>();
@@ -270,7 +291,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 default:
                     if (entitySerializerOptions.Strictness == Strictness.Strict)
                     {
-                        throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+                        throw new JsonException($"We don't know how to handle value of type {value.GetType().Name}");
                     }
                     else
                     {

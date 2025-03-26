@@ -1,6 +1,7 @@
 ﻿using AlbanianXrm.PowerPlatform;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -70,6 +71,303 @@ namespace EntitySerializerTests
             var outputContext = EntitySerializer.Deserialize<RemoteExecutionContext>(output);
             Assert.NotNull(output);
             Assert.Equivalent(inputContext, outputContext, true);
+        }
+
+        [Fact]
+        public void RemoteExecutionContextFromDocumentationCanBeDeserialized()
+        {
+            //Payload comes from: https://learn.microsoft.com/en-us/power-apps/developer/data-platform/use-webhooks
+            var input = @"{
+    ""BusinessUnitId"": ""e2b9dd85-e89e-e711-8122-000d3aa2331c"",
+    ""CorrelationId"": ""aaaa0000-bb11-2222-33cc-444444dddddd"",
+    ""Depth"": 1,
+    ""InitiatingUserId"": ""11bb11bb-cc22-dd33-ee44-55ff55ff55ff"",
+    ""InputParameters"": [{
+        ""key"": ""Target"",
+        ""value"": {
+            ""__type"": ""Entity:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+            ""Attributes"": [{
+                ""key"": ""firstname"",
+                ""value"": ""James""
+            }, {
+                ""key"": ""contactid"",
+                ""value"": ""6d81597f-0f9f-e711-8122-000d3aa2331c""
+            }, {
+                ""key"": ""fullname"",
+                ""value"": ""James Glynn (sample)""
+            }, {
+                ""key"": ""yomifullname"",
+                ""value"": ""James Glynn (sample)""
+            }, {
+                ""key"": ""modifiedon"",
+                ""value"": ""\/Date(1506384247000)\/""
+            }, {
+                ""key"": ""modifiedby"",
+                ""value"": {
+                    ""__type"": ""EntityReference:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                    ""Id"": ""11bb11bb-cc22-dd33-ee44-55ff55ff55ff"",
+                    ""KeyAttributes"": [],
+                    ""LogicalName"": ""systemuser"",
+                    ""Name"": null,
+                    ""RowVersion"": null
+                }
+            }, {
+                ""key"": ""modifiedonbehalfby"",
+                ""value"": null
+            }],
+            ""EntityState"": null,
+            ""FormattedValues"": [],
+            ""Id"": ""6d81597f-0f9f-e711-8122-000d3aa2331c"",
+            ""KeyAttributes"": [],
+            ""LogicalName"": ""contact"",
+            ""RelatedEntities"": [],
+            ""RowVersion"": null
+        }
+    }],
+    ""IsExecutingOffline"": false,
+    ""IsInTransaction"": false,
+    ""IsOfflinePlayback"": false,
+    ""IsolationMode"": 1,
+    ""MessageName"": ""Update"",
+    ""Mode"": 1,
+    ""OperationCreatedOn"": ""\/Date(1506409448000-0700)\/"",
+    ""OperationId"": ""4af10637-4ea2-e711-8122-000d3aa2331c"",
+    ""OrganizationId"": ""00aa00aa-bb11-cc22-dd33-44ee44ee44ee"",
+    ""OrganizationName"": ""OrgName"",
+    ""OutputParameters"": [],
+    ""OwningExtension"": {
+        ""Id"": ""75417616-4ea2-e711-8122-000d3aa2331c"",
+        ""KeyAttributes"": [],
+        ""LogicalName"": ""sdkmessageprocessingstep"",
+        ""Name"": null,
+        ""RowVersion"": null
+    },
+    ""ParentContext"": {
+        ""BusinessUnitId"": ""e2b9dd85-e89e-e711-8122-000d3aa2331c"",
+        ""CorrelationId"": ""aaaa0000-bb11-2222-33cc-444444dddddd"",
+        ""Depth"": 1,
+        ""InitiatingUserId"": ""11bb11bb-cc22-dd33-ee44-55ff55ff55ff"",
+        ""InputParameters"": [{
+            ""key"": ""Target"",
+            ""value"": {
+                ""__type"": ""Entity:http:\/\/schemas.microsoft.com\/xrm\/2011\/Contracts"",
+                ""Attributes"": [{
+                    ""key"": ""firstname"",
+                    ""value"": ""James""
+                }, {
+                    ""key"": ""contactid"",
+                    ""value"": ""6d81597f-0f9f-e711-8122-000d3aa2331c""
+                }],
+                ""EntityState"": null,
+                ""FormattedValues"": [],
+                ""Id"": ""6d81597f-0f9f-e711-8122-000d3aa2331c"",
+                ""KeyAttributes"": [],
+                ""LogicalName"": ""contact"",
+                ""RelatedEntities"": [],
+                ""RowVersion"": null
+            }
+        }, {
+            ""key"": ""SuppressDuplicateDetection"",
+            ""value"": false
+        }],
+        ""IsExecutingOffline"": false,
+        ""IsInTransaction"": false,
+        ""IsOfflinePlayback"": false,
+        ""IsolationMode"": 1,
+        ""MessageName"": ""Update"",
+        ""Mode"": 1,
+        ""OperationCreatedOn"": ""\/Date(1506409448000-0700)\/"",
+        ""OperationId"": ""4af10637-4ea2-e711-8122-000d3aa2331c"",
+        ""OrganizationId"": ""00aa00aa-bb11-cc22-dd33-44ee44ee44ee"",
+        ""OrganizationName"": ""OneFarm"",
+        ""OutputParameters"": [],
+        ""OwningExtension"": {
+            ""Id"": ""75417616-4ea2-e711-8122-000d3aa2331c"",
+            ""KeyAttributes"": [],
+            ""LogicalName"": ""sdkmessageprocessingstep"",
+            ""Name"": null,
+            ""RowVersion"": null
+        },
+        ""ParentContext"": null,
+        ""PostEntityImages"": [],
+        ""PreEntityImages"": [],
+        ""PrimaryEntityId"": ""6d81597f-0f9f-e711-8122-000d3aa2331c"",
+        ""PrimaryEntityName"": ""contact"",
+        ""RequestId"": null,
+        ""SecondaryEntityName"": ""none"",
+        ""SharedVariables"": [{
+            ""key"": ""ChangedEntityTypes"",
+            ""value"": [{
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""feedback"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""contract"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""salesorder"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""connection"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""socialactivity"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""postfollow"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""incident"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""invoice"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""entitlement"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""lead"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""opportunity"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""quote"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""socialprofile"",
+                ""value"": ""Update""
+            }, {
+                ""__type"": ""KeyValuePairOfstringstring:#System.Collections.Generic"",
+                ""key"": ""contact"",
+                ""value"": ""Update""
+            }]
+        }],
+        ""Stage"": 30,
+        ""UserId"": ""11bb11bb-cc22-dd33-ee44-55ff55ff55ff""
+    },
+    ""PostEntityImages"": [{
+        ""key"": ""AsynchronousStepPrimaryName"",
+        ""value"": {
+            ""Attributes"": [{
+                ""key"": ""fullname"",
+                ""value"": ""James Glynn (sample)""
+            }, {
+                ""key"": ""contactid"",
+                ""value"": ""6d81597f-0f9f-e711-8122-000d3aa2331c""
+            }],
+            ""EntityState"": null,
+            ""FormattedValues"": [],
+            ""Id"": ""6d81597f-0f9f-e711-8122-000d3aa2331c"",
+            ""KeyAttributes"": [],
+            ""LogicalName"": ""contact"",
+            ""RelatedEntities"": [],
+            ""RowVersion"": null
+        }
+    }],
+    ""PreEntityImages"": [],
+    ""PrimaryEntityId"": ""6d81597f-0f9f-e711-8122-000d3aa2331c"",
+    ""PrimaryEntityName"": ""contact"",
+    ""RequestId"": null,
+    ""SecondaryEntityName"": ""none"",
+    ""SharedVariables"": [],
+    ""Stage"": 40,
+    ""UserId"": ""11bb11bb-cc22-dd33-ee44-55ff55ff55ff""
+}";
+
+            var deserialized = EntitySerializer.Deserialize<RemoteExecutionContext>(input, new EntitySerializerOptions());
+            Assert.NotNull(deserialized);
+            //Assert ChangedEntityTypes
+            Assert.Equal(1, deserialized.ParentContext.SharedVariables.Count);
+            var changedEntityTypes = deserialized.ParentContext.SharedVariables["ChangedEntityTypes"] as Dictionary<string, string>;
+            Assert.Equal(14, changedEntityTypes.Count);
+            Assert.NotNull(changedEntityTypes);
+            Assert.Equal(new Dictionary<string, string>
+            {
+                { "feedback", "Update" },
+                { "contract", "Update" },
+                { "salesorder", "Update" },
+                { "connection", "Update" },
+                { "socialactivity", "Update" },
+                { "postfollow", "Update" },
+                { "incident", "Update" },
+                { "invoice", "Update" },
+                { "entitlement", "Update" },
+                { "lead", "Update" },
+                { "opportunity", "Update" },
+                { "quote", "Update" },
+                { "socialprofile", "Update" },
+                { "contact", "Update" }
+            }, changedEntityTypes);
+
+            //Assert other aspects of the RemoteExecutionContext
+            var target = deserialized.InputParameters["Target"] as Entity;
+            Assert.NotNull(target);
+            Assert.Equal(7, target.Attributes.Count);
+            Assert.Equal("James", target["firstname"]);
+            Assert.Equal(new Guid("6d81597f-0f9f-e711-8122-000d3aa2331c"), target.Id);
+            Assert.Equal("James Glynn (sample)", target["fullname"]);
+            Assert.Equal("James Glynn (sample)", target["yomifullname"]);
+            Assert.Equal(new Guid("11bb11bb-cc22-dd33-ee44-55ff55ff55ff"), (target["modifiedby"] as EntityReference).Id);
+            Assert.Null(target["modifiedonbehalfby"]);
+            Assert.Equal(new Guid("e2b9dd85-e89e-e711-8122-000d3aa2331c"), deserialized.BusinessUnitId);
+            Assert.Equal(new Guid("aaaa0000-bb11-2222-33cc-444444dddddd"), deserialized.CorrelationId);
+            Assert.Equal(1, deserialized.Depth);
+            Assert.Equal(new Guid("11bb11bb-cc22-dd33-ee44-55ff55ff55ff"), deserialized.InitiatingUserId);
+            Assert.Equal(1, deserialized.InputParameters.Count);
+            Assert.Equal("Update", deserialized.MessageName);
+            Assert.Equal(1, deserialized.Mode);
+            Assert.Equal(new Guid("4af10637-4ea2-e711-8122-000d3aa2331c"), deserialized.OperationId);
+            Assert.Equal(new Guid("00aa00aa-bb11-cc22-dd33-44ee44ee44ee"), deserialized.OrganizationId);
+            Assert.Equal("OrgName", deserialized.OrganizationName);
+            Assert.Equal(0, deserialized.OutputParameters.Count);
+            Assert.Equal(new Guid("75417616-4ea2-e711-8122-000d3aa2331c"), deserialized.OwningExtension.Id);
+            Assert.Equal("sdkmessageprocessingstep", deserialized.OwningExtension.LogicalName);
+            Assert.Equal(2, deserialized.ParentContext.InputParameters.Count);
+            Assert.Equal("Update", deserialized.ParentContext.MessageName);
+            Assert.Equal(1, deserialized.ParentContext.Mode);
+            Assert.Equal(new Guid("4af10637-4ea2-e711-8122-000d3aa2331c"), deserialized.ParentContext.OperationId);
+            Assert.Equal(new Guid("00aa00aa-bb11-cc22-dd33-44ee44ee44ee"), deserialized.ParentContext.OrganizationId);
+            Assert.Equal("OneFarm", deserialized.ParentContext.OrganizationName);
+            Assert.Equal(0, deserialized.ParentContext.OutputParameters.Count);
+            Assert.Equal(new Guid("75417616-4ea2-e711-8122-000d3aa2331c"), deserialized.ParentContext.OwningExtension.Id);
+            Assert.Equal("sdkmessageprocessingstep", deserialized.ParentContext.OwningExtension.LogicalName);
+            Assert.Equal(0, deserialized.ParentContext.PostEntityImages.Count);
+            Assert.Equal(0, deserialized.ParentContext.PreEntityImages.Count);
+            Assert.Equal(new Guid("6d81597f-0f9f-e711-8122-000d3aa2331c"), deserialized.ParentContext.PrimaryEntityId);
+            Assert.Equal("contact", deserialized.ParentContext.PrimaryEntityName);
+            Assert.Null(deserialized.ParentContext.RequestId);
+            Assert.Equal("none", deserialized.ParentContext.SecondaryEntityName);
+            Assert.Equal(30, deserialized.ParentContext.Stage);
+            Assert.Equal(new Guid("11bb11bb-cc22-dd33-ee44-55ff55ff55ff"), deserialized.ParentContext.UserId);
+            Assert.Equal(1, deserialized.PostEntityImages.Count);
+            //Assert PostEntityImages 
+            var postEntityImage = deserialized.PostEntityImages["AsynchronousStepPrimaryName"] as Entity;
+            Assert.NotNull(postEntityImage);
+            Assert.Equal(2, postEntityImage.Attributes.Count);
+            Assert.Equal("James Glynn (sample)", postEntityImage["fullname"]);
+            Assert.Equal(new Guid("6d81597f-0f9f-e711-8122-000d3aa2331c"), postEntityImage.Id);
+            Assert.Equal("contact", postEntityImage.LogicalName);
+            Assert.Equal(0, deserialized.PreEntityImages.Count);
+            Assert.Equal(new Guid("6d81597f-0f9f-e711-8122-000d3aa2331c"), deserialized.PrimaryEntityId);
+            Assert.Equal("contact", deserialized.PrimaryEntityName);
+            Assert.Null(deserialized.RequestId);
+            Assert.Equal("none", deserialized.SecondaryEntityName);
+            Assert.Equal(0, deserialized.SharedVariables.Count);
+            Assert.Equal(40, deserialized.Stage);
+            Assert.Equal(new Guid("11bb11bb-cc22-dd33-ee44-55ff55ff55ff"), deserialized.UserId);
         }
     }
 }
