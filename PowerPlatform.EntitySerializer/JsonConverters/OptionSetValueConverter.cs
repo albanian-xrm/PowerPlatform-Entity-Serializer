@@ -81,7 +81,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                 writingSchema = true;
             }
             writer.WriteStartObject();
-            if (entitySerializerOptions.writingSchema)
+            if (writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             }
