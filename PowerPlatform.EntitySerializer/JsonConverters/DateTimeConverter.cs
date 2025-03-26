@@ -77,7 +77,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public static string ConvertToString(DateTime dateTime)
         {
             var milliseconds = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds;
-            return $"/Date({milliseconds})/";
+            //Well escaping forward slashes is optional but in context of date operations it is a convention: https://asp-blogs.azurewebsites.net/bleroy/dates-and-json
+            return $"\"\\/Date({milliseconds})\\/\"";
         }
 
 
@@ -114,19 +115,26 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            var stringValue = entitySerializerOptions.DateOptions == DateOptions.SerializeXrmDate ? ConvertToString(value) : value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-            if (entitySerializerOptions.writingSchema)
+            var stringValue = entitySerializerOptions.DateOptions == DateOptions.SerializeXrmDate ? ConvertToString(value) : $"\"{value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\"";
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = false;
+            }
+            if (writingSchema)
             {
                 writer.WriteStartObject();
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-                writer.WriteString(EntitySerializer.ValuePropertyName, stringValue);
+                writer.WritePropertyName(EntitySerializer.ValuePropertyName);
+                writer.WriteRawValue(stringValue);
                 writer.WriteEndObject();
             }
             else
             {
                 
-                writer.WriteStringValue(stringValue);
+                writer.WriteRawValue(stringValue);
             }
+            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

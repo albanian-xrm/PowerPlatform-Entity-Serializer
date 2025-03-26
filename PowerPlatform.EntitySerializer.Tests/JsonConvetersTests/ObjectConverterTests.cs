@@ -58,7 +58,7 @@ namespace JsonConvertersTests
             var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc);
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
-            Assert.Equal("{\"__type\":\"DateTime:#System\",\"__value\":\"/Date(1527757524000)/\"}", serializedDate);
+            Assert.Equal("{\"__type\":\"DateTime:#System\",\"__value\":\"\\/Date(1527757524000)\\/\"}", serializedDate);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace JsonConvertersTests
             var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc);
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
-            Assert.Equal("\"/Date(1527757524000)/\"", serializedDate);
+            Assert.Equal("\"\\/Date(1527757524000)\\/\"", serializedDate);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace JsonConvertersTests
             var date = new DateTimeOffset(2018, 5, 31, 12, 5, 24, TimeSpan.FromHours(3)).LocalDateTime;
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
-            Assert.Equal("\"/Date(1527757524000)/\"", serializedDate);
+            Assert.Equal("\"\\/Date(1527757524000)\\/\"", serializedDate);
         }
 
 
