@@ -77,8 +77,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public static string ConvertToString(DateTime dateTime)
         {
             var milliseconds = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds;
-            //Well escaping forward slashes is optional but in context of date operations it is a convention: https://asp-blogs.azurewebsites.net/bleroy/dates-and-json
-            return $"\"\\/Date({milliseconds})\\/\"";
+            // Well escaping forward slashes is optional but in context of date operations it is a convention: https://asp-blogs.azurewebsites.net/bleroy/dates-and-json
+            return $"\"\\/Date({milliseconds:0})\\/\"";
         }
 
 

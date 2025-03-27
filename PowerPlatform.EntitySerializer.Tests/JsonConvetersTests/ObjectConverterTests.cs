@@ -55,7 +55,7 @@ namespace JsonConvertersTests
                 WriteSchema = WriteSchemaOptions.Always,
                 DateOptions = DateOptions.SerializeXrmDate
             };
-            var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc);
+            var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc).AddMilliseconds(0.123);
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
             Assert.Equal("{\"__type\":\"DateTime:#System\",\"__value\":\"\\/Date(1527757524000)\\/\"}", serializedDate);
@@ -69,7 +69,7 @@ namespace JsonConvertersTests
                 WriteSchema = WriteSchemaOptions.IfNeeded,
                 DateOptions = DateOptions.SerializeXrmDate
             };
-            var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc);
+            var date = new DateTime(2018, 5, 31, 9, 5, 24, DateTimeKind.Utc).AddMilliseconds(0.123);
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
             Assert.Equal("\"\\/Date(1527757524000)\\/\"", serializedDate);
@@ -83,7 +83,7 @@ namespace JsonConvertersTests
                 WriteSchema = WriteSchemaOptions.IfNeeded,
                 DateOptions = DateOptions.SerializeXrmDate
             };
-            var date = new DateTimeOffset(2018, 5, 31, 12, 5, 24, TimeSpan.FromHours(3)).LocalDateTime;
+            var date = new DateTimeOffset(2018, 5, 31, 12, 5, 24, TimeSpan.FromHours(3)).AddMilliseconds(0.123).LocalDateTime;
             string serializedDate = EntitySerializer.Serialize(date, typeof(DateTime), entitySerializerOptions);
             Debug.WriteLine(serializedDate);
             Assert.Equal("\"\\/Date(1527757524000)\\/\"", serializedDate);
