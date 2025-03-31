@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -44,7 +43,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     var propertyName = reader.GetString();
                     reader.Read();
-                    switch (propertyName)
+                    switch (propertyName.ToLower())
                     {
                         case EntitySerializer.CollectionKeyPropertyName:
                             itemKey = reader.GetString();

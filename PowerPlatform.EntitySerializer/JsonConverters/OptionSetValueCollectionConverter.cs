@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -75,6 +74,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             }
 
             if (optionSetValueConverter == null) optionSetValueConverter = entitySerializerOptions.converters.GetForType<OptionSetValue>();
+            writer.WriteStartArray();
             foreach (var optionSetValue in value)
             {
                 optionSetValueConverter.Write(writer, optionSetValue, options);

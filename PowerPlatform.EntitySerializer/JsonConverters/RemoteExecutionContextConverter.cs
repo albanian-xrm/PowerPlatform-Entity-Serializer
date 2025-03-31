@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -186,6 +185,118 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, RemoteExecutionContext value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                writer.WriteEndObject();
+                return;
+            }
+            if (guidConverter == null) guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+            if (parameterCollectionConverter == null) parameterCollectionConverter = entitySerializerOptions.converters.GetForType<ParameterCollection>();
+            if (dateTimeConverter == null) dateTimeConverter = entitySerializerOptions.converters.GetForType<DateTime>();
+            if (entityImageCollectionConverter == null) entityImageCollectionConverter = entitySerializerOptions.converters.GetForType<EntityImageCollection>();
+            if (entityReferenceConverter == null) entityReferenceConverter = entitySerializerOptions.converters.GetForType<EntityReference>();
+
+            writer.WritePropertyName(nameof(value.BusinessUnitId));
+            guidConverter.Write(writer, value.BusinessUnitId, options);
+
+            writer.WritePropertyName(nameof(value.CorrelationId));
+            guidConverter.Write(writer, value.CorrelationId, options);
+
+            writer.WritePropertyName(nameof(value.Depth));
+            writer.WriteNumberValue(value.Depth);
+
+            writer.WritePropertyName(nameof(value.InitiatingUserAzureActiveDirectoryObjectId));
+            guidConverter.Write(writer, value.InitiatingUserAzureActiveDirectoryObjectId, options);
+
+            writer.WritePropertyName(nameof(value.InitiatingUserId));
+            guidConverter.Write(writer, value.InitiatingUserId, options);
+
+            writer.WritePropertyName(nameof(value.InputParameters));
+            parameterCollectionConverter.Write(writer, value.InputParameters, options);
+
+            writer.WritePropertyName(nameof(value.IsExecutingOffline));
+            writer.WriteBooleanValue(value.IsExecutingOffline);
+
+            writer.WritePropertyName(nameof(value.IsInTransaction));
+            writer.WriteBooleanValue(value.IsInTransaction);
+
+            writer.WritePropertyName(nameof(value.IsOfflinePlayback));
+            writer.WriteBooleanValue(value.IsOfflinePlayback);
+
+            writer.WritePropertyName(nameof(value.IsolationMode));
+            writer.WriteNumberValue(value.IsolationMode);
+
+            writer.WritePropertyName(nameof(value.MessageName));
+            writer.WriteStringValue(value.MessageName);
+
+            writer.WritePropertyName(nameof(value.Mode));
+            writer.WriteNumberValue(value.Mode);
+
+            writer.WritePropertyName(nameof(value.OperationCreatedOn));
+            dateTimeConverter.Write(writer, value.OperationCreatedOn, options);
+
+            writer.WritePropertyName(nameof(value.OperationId));
+            guidConverter.Write(writer, value.OperationId, options);
+
+            writer.WritePropertyName(nameof(value.OrganizationId));
+            guidConverter.Write(writer, value.OrganizationId, options);
+
+            writer.WritePropertyName(nameof(value.OrganizationName));
+            writer.WriteStringValue(value.OrganizationName);
+
+            writer.WritePropertyName(nameof(value.OutputParameters));
+            parameterCollectionConverter.Write(writer, value.OutputParameters, options);
+
+            writer.WritePropertyName(nameof(value.OwningExtension));
+            entityReferenceConverter.Write(writer, value.OwningExtension, options);
+
+            if (value.ParentContext != null)
+            {
+                writer.WritePropertyName(nameof(value.ParentContext));
+                Write(writer, value.ParentContext, options); // Recursively write the parent context
+            } else
+            {
+                writer.WriteNull(nameof(value.ParentContext));
+            }
+
+                writer.WritePropertyName(nameof(value.PostEntityImages));
+            entityImageCollectionConverter.Write(writer, value.PostEntityImages, options);
+
+            writer.WritePropertyName(nameof(value.PreEntityImages));
+            entityImageCollectionConverter.Write(writer, value.PreEntityImages, options);
+
+            writer.WritePropertyName(nameof(value.PrimaryEntityId));
+            guidConverter.Write(writer, value.PrimaryEntityId, options);
+
+            writer.WritePropertyName(nameof(value.PrimaryEntityName));
+            writer.WriteStringValue(value.PrimaryEntityName);
+
+            writer.WritePropertyName(nameof(value.RequestId));
+            if (value.RequestId.HasValue)
+            {
+                guidConverter.Write(writer, value.RequestId.Value, options);
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+
+            writer.WritePropertyName(nameof(value.SecondaryEntityName));
+            writer.WriteStringValue(value.SecondaryEntityName);
+
+            writer.WritePropertyName(nameof(value.SharedVariables));
+            parameterCollectionConverter.Write(writer, value.SharedVariables, options);
+
+            writer.WritePropertyName(nameof(value.Stage));
+            writer.WriteNumberValue(value.Stage);
+
+            writer.WritePropertyName(nameof(value.UserAzureActiveDirectoryObjectId));
+            guidConverter.Write(writer, value.UserAzureActiveDirectoryObjectId, options);
+
+            writer.WritePropertyName(nameof(value.UserId));
+            guidConverter.Write(writer, value.UserId, options);
+
             writer.WriteEndObject();
         }
     }

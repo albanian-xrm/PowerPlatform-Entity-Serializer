@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -61,7 +60,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public static DateTime ConvertFromString(string stringValue)
         {
-            stringValue = stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length);
+            stringValue = stringValue.StartsWith("/Date(") ?
+                stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length) :
+                stringValue.Substring("\\/Date(".Length, stringValue.Length - "\\/Date(".Length - ")\\/".Length);
             var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
             if (charTimezone == '+' || charTimezone == '-')
             {
@@ -78,8 +79,8 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public static string ConvertToString(DateTime dateTime)
         {
             var milliseconds = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds;
-            var offset = dateTime.ToString("zzz").Replace(":", "");
-            return $"/Date({milliseconds}{offset})/";
+            // Well escaping forward slashes is optional but in context of date operations it is a convention: https://asp-blogs.azurewebsites.net/bleroy/dates-and-json
+            return $"\"\\/Date({milliseconds:0})\\/\"";
         }
 
 
@@ -116,18 +117,26 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            if (entitySerializerOptions.writingSchema)
+            var stringValue = entitySerializerOptions.DateOptions == DateOptions.SerializeXrmDate ? ConvertToString(value) : $"\"{value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\"";
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = false;
+            }
+            if (writingSchema)
             {
                 writer.WriteStartObject();
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
-                writer.WriteString(EntitySerializer.ValuePropertyName, value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                writer.WritePropertyName(EntitySerializer.ValuePropertyName);
+                writer.WriteRawValue(stringValue);
                 writer.WriteEndObject();
             }
             else
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-            }
 
+                writer.WriteRawValue(stringValue);
+            }
+            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

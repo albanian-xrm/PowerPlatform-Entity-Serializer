@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -62,7 +61,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.RowVersion = reader.GetString();
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        if (entitySerializerOptions.Strictness == Strictness.Strict)
+                        {
+                            throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        } else {
+                            reader.Skip();
+                            break;
+                        }
                 }
                 if (!reader.Read())
                 {
@@ -90,7 +95,12 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         public override void Write(Utf8JsonWriter writer, EntityReference value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            if (entitySerializerOptions.writingSchema)
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = true;
+            }
+            if (entitySerializerOptions.writingSchema || writingSchema)
             {
                 writer.WriteString(EntitySerializer.TypePropertyName, TypeSchema);
             };
@@ -107,6 +117,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             writer.WriteString(nameof(value.RowVersion), value.RowVersion);
 
             writer.WriteEndObject();
+            entitySerializerOptions.writingSchema = writingSchema;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

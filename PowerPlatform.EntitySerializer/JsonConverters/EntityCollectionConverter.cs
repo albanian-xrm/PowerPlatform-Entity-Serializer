@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -62,7 +61,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         value.TotalRecordCountLimitExceeded = reader.GetBoolean();
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for EntityReference type.");
+                        if (entitySerializerOptions.Strictness == Strictness.Strict)
+                        {
+                            throw new JsonException($"Unknknown property \"{propertyName}\" for EntityCollection type.");
+                        } else
+                        {
+                            reader.Skip();
+                            break;
+                        }
                 }
                 if (!reader.Read())
                 {

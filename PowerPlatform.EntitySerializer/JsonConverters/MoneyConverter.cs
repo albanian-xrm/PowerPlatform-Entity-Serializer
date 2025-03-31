@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -75,6 +74,11 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public override void Write(Utf8JsonWriter writer, Money value, JsonSerializerOptions options)
         {
+            var writingSchema = entitySerializerOptions.writingSchema;
+            if (entitySerializerOptions.WriteSchema == WriteSchemaOptions.IfNeeded)
+            {
+                writingSchema = true;
+            }
             writer.WriteStartObject();
             if (entitySerializerOptions.writingSchema)
             {
@@ -82,6 +86,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             }
             writer.WriteNumber(nameof(value.Value), value.Value);
             writer.WriteEndObject();
+            entitySerializerOptions.writingSchema = writingSchema;
         }
     }
 }

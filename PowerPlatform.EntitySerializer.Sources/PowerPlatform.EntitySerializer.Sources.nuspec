@@ -15,9 +15,13 @@
 		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
 		<releaseNotes>
 			v$version$:
-			- Make QueryExpression Deserializable/Serializable (thnx. Jānis Veinbergs)
+			- DateOptions now allow you to instruct to serialize in Xrm Unix timestamp format
+			- Fixes Schema writing for IfNeeded for multiple types
+			- Fix: OptionSetValueCollectionConverter doesn't write StartArray
+			- Write Enums
+			* thnx. Jānis Veinbergs
 		</releaseNotes>
-		<copyright>Copyright 2024</copyright>
+		<copyright>Copyright 2025</copyright>
 		<tags>Xrm AlbanianXrm Dataverse JSON</tags>
 	</metadata>
 	<files>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
+﻿using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,11 +9,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
     {
         public const string TypeSchema = "ColumnSet:http://schemas.microsoft.com/xrm/2011/Contracts";
         private readonly EntitySerializerOptions entitySerializerOptions;
-        private JsonConverter<AttributeCollection> attributeCollectionConverter;
-        private JsonConverter<FormattedValueCollection> formattedValueCollectionConverter;
-        private JsonConverter<KeyAttributeCollection> keyAttributeCollectionConverter;
-        private JsonConverter<RelatedEntityCollection> relatedEntityCollectionConverter;
-
+   
         public ColumnSetConverter(EntitySerializerOptions entitySerializerOptions)
         {
             this.entitySerializerOptions = entitySerializerOptions;

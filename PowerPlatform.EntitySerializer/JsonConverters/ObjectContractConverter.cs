@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -11,6 +13,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private readonly Dictionary<string, IObjectContractConverter> schemaBindings = new Dictionary<string, IObjectContractConverter>();
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<IList<object>> listOfObjectsConverter;
+        private JsonConverter<KeyValuePair<string, string>> kvpStringStringConverter;
 
         public ObjectContractConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -110,7 +113,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     return objectConverter.Read(ref reader, typeof(object), options);
                 case JsonTokenType.StartArray:
                     if (listOfObjectsConverter == null) listOfObjectsConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
-                    return listOfObjectsConverter.Read(ref reader, typeof(IList<object>), options);
+                    var collection = listOfObjectsConverter.Read(ref reader, typeof(ICollection<object>), options);
+                    ///SharedVariables may contain ChangedEntityTypes which is actually a Dictionary and not a List
+                    if (collection.All(x => x?.GetType() == typeof(KeyValuePair<string, string>)))
+                    {
+                        return collection.Cast<KeyValuePair<string, string>>().ToDictionary(x => x.Key, x => x.Value);
+                    }
+                    return collection;
                 case JsonTokenType.String:
                     if (itemKey != null && entitySerializerOptions.KnowGuidAttributes.Contains(itemKey))
                     {
@@ -124,10 +133,20 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     return stringResult;
                 case JsonTokenType.Number:
                     var decimalResult = reader.GetDecimal();
-                    if (decimalResult % 1 == 0) return (int)decimalResult;
-                    return decimalResult;
+                    if (reader.ValueSpan.IndexOf((byte)'.') >= 0 || decimalResult % 1 != 0) {
+                        return decimalResult;
+                    } else {
+                        return (int)decimalResult;
+                    }
                 default:
-                    throw new JsonException();
+                    if (entitySerializerOptions.Strictness == Strictness.Strict)
+                    {
+                        throw new JsonException($"We don't know how to handle value of type {reader.TokenType}");
+                    }
+                    else
+                    {
+                        return null;
+                    }
             }
         }
 
@@ -154,10 +173,21 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     writer.WriteStringValue(stringValue);
                     break;
                 case Guid guidValue:
-                    writer.WriteStringValue(guidValue);
+                    var guidConverter = entitySerializerOptions.converters.GetForType<Guid>();
+                    guidConverter.Write(writer, guidValue, options);
                     break;
                 case DateTime dateTimeValue:
-                    writer.WriteStringValue(DateTimeConverter.ConvertToString(dateTimeValue));
+                    var dateTimeConverter = entitySerializerOptions.converters.GetForType<DateTime>();
+                    dateTimeConverter.Write(writer, dateTimeValue, options);
+                    break;
+                case ICollection<KeyValuePair<string, string>> collection:
+                    writer.WriteStartArray();
+                    if (kvpStringStringConverter == null) kvpStringStringConverter = entitySerializerOptions.converters.GetForType<KeyValuePair<string, string>>();
+                    foreach (var item in collection)
+                    {
+                        kvpStringStringConverter.Write(writer, item, options);
+                    }
+                    writer.WriteEndArray();
                     break;
                 case IList<object> listValue:
                     JsonConverter<IList<object>> listConverter = entitySerializerOptions.converters.GetForType<IList<object>>();
@@ -172,11 +202,102 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     writer.WriteEndObject();
                     break;
+                case KeyValuePair<string, string> kvp:
+                    if (kvpStringStringConverter == null) kvpStringStringConverter = entitySerializerOptions.converters.GetForType<KeyValuePair<string, string>>();
+                    kvpStringStringConverter.Write(writer, kvp, options);
+                    break;
+                case AttributeCollection attributeCollectionValue:
+                    JsonConverter<AttributeCollection> attributeCollectionConverter = entitySerializerOptions.converters.GetForType<AttributeCollection>();
+                    attributeCollectionConverter.Write(writer, attributeCollectionValue, options);
+                    break;
+                case ColumnSet columnSetValue:
+                    JsonConverter<ColumnSet> columnSetConverter = entitySerializerOptions.converters.GetForType<ColumnSet>();
+                    columnSetConverter.Write(writer, columnSetValue, options);
+                    break;
+                case ConditionExpression conditionExpressionValue:
+                    JsonConverter<ConditionExpression> conditionExpressionConverter = entitySerializerOptions.converters.GetForType<ConditionExpression>();
+                    conditionExpressionConverter.Write(writer, conditionExpressionValue, options);
+                    break;
+                case EntityCollection entityCollectionValue:
+                    JsonConverter<EntityCollection> entityCollectionConverter = entitySerializerOptions.converters.GetForType<EntityCollection>();
+                    entityCollectionConverter.Write(writer, entityCollectionValue, options);
+                    break;
+                case Entity entityValue:
+                    JsonConverter<Entity> entityConverter = entitySerializerOptions.converters.GetForType<Entity>();
+                    entityConverter.Write(writer, entityValue, options);
+                    break;
+                case EntityImageCollection entityImageCollectionValue:
+                    JsonConverter<EntityImageCollection> entityImageCollectionConverter = entitySerializerOptions.converters.GetForType<EntityImageCollection>();
+                    entityImageCollectionConverter.Write(writer, entityImageCollectionValue, options);
+                    break;
+                case EntityReference entityReferenceValue:
+                    JsonConverter<EntityReference> entityReferenceConverter = entitySerializerOptions.converters.GetForType<EntityReference>();
+                    entityReferenceConverter.Write(writer, entityReferenceValue, options);
+                    break;
+                case FilterExpression filterExpressionValue:
+                    JsonConverter<FilterExpression> filterExpressionConverter = entitySerializerOptions.converters.GetForType<FilterExpression>();
+                    filterExpressionConverter.Write(writer, filterExpressionValue, options);
+                    break;
+                case FormattedValueCollection formattedValueCollectionValue:
+                    JsonConverter<FormattedValueCollection> formattedValueCollectionConverter = entitySerializerOptions.converters.GetForType<FormattedValueCollection>();
+                    formattedValueCollectionConverter.Write(writer, formattedValueCollectionValue, options);
+                    break;
+                case KeyAttributeCollection keyAttributeCollectionValue:
+                    JsonConverter<KeyAttributeCollection> keyAttributeCollectionConverter = entitySerializerOptions.converters.GetForType<KeyAttributeCollection>();
+                    keyAttributeCollectionConverter.Write(writer, keyAttributeCollectionValue, options);
+                    break;
+                case LinkEntity linkEntityValue:
+                    JsonConverter<LinkEntity> linkEntityConverter = entitySerializerOptions.converters.GetForType<LinkEntity>();
+                    linkEntityConverter.Write(writer, linkEntityValue, options);
+                    break;
+                case Money moneyValue:
+                    JsonConverter<Money> moneyConverter = entitySerializerOptions.converters.GetForType<Money>();
+                    moneyConverter.Write(writer, moneyValue, options);
+                    break;
+                case OptionSetValue optionSetValue:
+                    JsonConverter<OptionSetValue> optionSetValueConverter = entitySerializerOptions.converters.GetForType<OptionSetValue>();
+                    optionSetValueConverter.Write(writer, optionSetValue, options);
+                    break;
+                case OptionSetValueCollection optionSetValueCollectionValue:
+                    JsonConverter<OptionSetValueCollection> optionSetValueCollectionConverter = entitySerializerOptions.converters.GetForType<OptionSetValueCollection>();
+                    optionSetValueCollectionConverter.Write(writer, optionSetValueCollectionValue, options);
+                    break;
+                case ParameterCollection parameterCollectionValue:
+                    JsonConverter<ParameterCollection> parameterCollectionConverter = entitySerializerOptions.converters.GetForType<ParameterCollection>();
+                    parameterCollectionConverter.Write(writer, parameterCollectionValue, options);
+                    break;
+                case QueryExpression queryExpressionValue:
+                    JsonConverter<QueryExpression> queryExpressionConverter = entitySerializerOptions.converters.GetForType<QueryExpression>();
+                    queryExpressionConverter.Write(writer, queryExpressionValue, options);
+                    break;
+                case RelatedEntityCollection relatedEntityCollectionValue:
+                    JsonConverter<RelatedEntityCollection> relatedEntityCollectionConverter = entitySerializerOptions.converters.GetForType<RelatedEntityCollection>();
+                    relatedEntityCollectionConverter.Write(writer, relatedEntityCollectionValue, options);
+                    break;
+                case Relationship relationshipValue:
+                    JsonConverter<Relationship> relationshipConverter = entitySerializerOptions.converters.GetForType<Relationship>();
+                    relationshipConverter.Write(writer, relationshipValue, options);
+                    break;
+                case RemoteExecutionContext remoteExecutionContextValue:
+                    JsonConverter<RemoteExecutionContext> remoteExecutionContextConverter = entitySerializerOptions.converters.GetForType<RemoteExecutionContext>();
+                    remoteExecutionContextConverter.Write(writer, remoteExecutionContextValue, options);
+                    break;
                 case null:
                     writer.WriteNullValue();
                     break;
+                case Enum enumValue:
+                    writer.WriteStringValue(enumValue.ToString());
+                    break;
                 default:
-                    throw new JsonException($"We don'tknow how to handle value of type {value.GetType().Name}");
+                    if (entitySerializerOptions.Strictness == Strictness.Strict)
+                    {
+                        throw new JsonException($"We don't know how to handle value of type {value.GetType().Name}");
+                    }
+                    else
+                    {
+                        writer.WriteNullValue();
+                        break;
+                    }
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -47,7 +46,14 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                         }
                         break;
                     default:
-                        throw new JsonException($"Unknknown property \"{propertyName}\" for Relationship type.");
+                        if (entitySerializerOptions.Strictness == Strictness.Strict)
+                        {
+                            throw new JsonException($"Unknknown property \"{propertyName}\" for Relationship type.");
+                        } else
+                        {
+                            reader.Skip();
+                            break;
+                        }
                 }
                 if (!reader.Read())
                 {

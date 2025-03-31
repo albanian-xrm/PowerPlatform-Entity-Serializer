@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -44,8 +43,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                             itemKey = reader.GetString();
                             break;
                         case EntitySerializer.CollectionValuePropertyName:
-                            if (reader.TokenType != JsonTokenType.String) throw new JsonException();
-                            itemValue = reader.GetString();
+                            if (reader.TokenType == JsonTokenType.Null) itemValue = null;
+                            else if (reader.TokenType == JsonTokenType.String) itemValue = reader.GetString();
+                            else throw new JsonException($"FormattedValueCollection value property expected to be String, was: {reader.TokenType}");
                             reader.Read();
                             break;
                         default:

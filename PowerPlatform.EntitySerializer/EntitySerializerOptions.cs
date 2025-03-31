@@ -21,5 +21,9 @@ namespace AlbanianXrm.PowerPlatform
         public HashSet<string> KnowGuidAttributes { get { return _KnownGuidAttributes; } }
 
         public Dictionary<string, object> UnknownPropertiesLastSerialization = new Dictionary<string, object>();
+
+        public DateOptions DateOptions { get; set; } = DateOptions.SerializeIsoDate;
+
+        public Strictness Strictness { get; set; } = Strictness.Strict;
     }
 }
