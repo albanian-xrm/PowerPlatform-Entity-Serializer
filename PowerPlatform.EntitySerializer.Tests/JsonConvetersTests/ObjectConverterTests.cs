@@ -3,7 +3,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Diagnostics;
-using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -1,9 +1,7 @@
 ﻿using AlbanianXrm.PowerPlatform;
 using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;

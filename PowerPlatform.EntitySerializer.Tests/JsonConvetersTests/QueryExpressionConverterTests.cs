@@ -1,8 +1,5 @@
 ﻿using AlbanianXrm.PowerPlatform;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using System;
-using System.Diagnostics;
 using Xunit;
 using Xunit.Abstractions;
 

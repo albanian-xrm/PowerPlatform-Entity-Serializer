@@ -60,7 +60,9 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
 
         public static DateTime ConvertFromString(string stringValue)
         {
-            stringValue = stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length);
+            stringValue = stringValue.StartsWith("/Date(") ?
+                stringValue.Substring("/Date(".Length, stringValue.Length - "/Date(".Length - ")/".Length) :
+                stringValue.Substring("\\/Date(".Length, stringValue.Length - "\\/Date(".Length - ")\\/".Length);
             var charTimezone = stringValue.Length > 5 ? stringValue[stringValue.Length - 5] : '0';
             if (charTimezone == '+' || charTimezone == '-')
             {
@@ -131,7 +133,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
             }
             else
             {
-                
+
                 writer.WriteRawValue(stringValue);
             }
             entitySerializerOptions.writingSchema = writingSchema;
