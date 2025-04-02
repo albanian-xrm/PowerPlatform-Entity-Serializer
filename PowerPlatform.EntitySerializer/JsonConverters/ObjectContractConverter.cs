@@ -14,6 +14,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private readonly EntitySerializerOptions entitySerializerOptions;
         private JsonConverter<IList<object>> listOfObjectsConverter;
         private JsonConverter<KeyValuePair<string, string>> kvpStringStringConverter;
+        private JsonConverter<double> doubleConverter;
 
         public ObjectContractConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -132,11 +133,24 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     return stringResult;
                 case JsonTokenType.Number:
-                    var decimalResult = reader.GetDecimal();
-                    if (reader.ValueSpan.IndexOf((byte)'.') >= 0 || decimalResult % 1 != 0) {
-                        return decimalResult;
-                    } else {
-                        return (int)decimalResult;
+                    if (reader.TryGetDecimal(out var decimalResult))
+                    {
+                        if (reader.ValueSpan.IndexOf((byte)'.') >= 0 || decimalResult % 1 != 0 || decimalResult > int.MaxValue || decimalResult < int.MinValue)
+                        {
+                            return decimalResult;
+                        }
+                        else
+                        {
+                            return (int)decimalResult;
+                        }
+                    }
+                    else if (reader.TryGetDouble(out var doubleResult))
+                    {
+                        return doubleResult;
+                    }
+                    else
+                    {
+                        throw new JsonException();
                     }
                 default:
                     if (entitySerializerOptions.Strictness == Strictness.Strict)
@@ -168,6 +182,10 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     break;
                 case decimal decimalValue:
                     writer.WriteNumberValue(decimalValue);
+                    break;
+                case double doubleValue:
+                    if (doubleConverter == null) doubleConverter = entitySerializerOptions.converters.GetForType<double>();
+                    doubleConverter.Write(writer, doubleValue, options);
                     break;
                 case string stringValue:
                     writer.WriteStringValue(stringValue);
