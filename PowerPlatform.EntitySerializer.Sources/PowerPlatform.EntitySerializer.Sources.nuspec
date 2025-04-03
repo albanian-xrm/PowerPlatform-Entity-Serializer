@@ -15,10 +15,7 @@
 		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
 		<releaseNotes>
 			v$version$:
-			- DateOptions now allow you to instruct to serialize in Xrm Unix timestamp format
-			- Fixes Schema writing for IfNeeded for multiple types
-			- Fix: OptionSetValueCollectionConverter doesn't write StartArray
-			- Write Enums
+			- Support Double serialization/deserialization.
 			* thnx. Jānis Veinbergs
 		</releaseNotes>
 		<copyright>Copyright 2025</copyright>
