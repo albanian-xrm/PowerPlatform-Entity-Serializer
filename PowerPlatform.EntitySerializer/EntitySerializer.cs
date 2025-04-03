@@ -122,7 +122,8 @@ namespace AlbanianXrm.PowerPlatform
                     CanConvert<RelatedEntityCollection>(item, entitySerializerOptions.converters) ||
                     CanConvert<Relationship>(item, entitySerializerOptions.converters) ||
                     CanConvert<RemoteExecutionContext>(item, entitySerializerOptions.converters) || 
-                    CanConvert<KeyValuePair<string, string>>(item, entitySerializerOptions.converters))
+                    CanConvert<KeyValuePair<string, string>>(item, entitySerializerOptions.converters) ||
+                    CanConvert<double>(item, entitySerializerOptions.converters))
                 {
                     continue;
                 }
@@ -267,6 +268,11 @@ namespace AlbanianXrm.PowerPlatform
             {
                 entitySerializerOptions.JsonSerializerOptions.Converters.Add(
                     entitySerializerOptions.converters.Set(new KeyValuePairStringStringConverter(entitySerializerOptions)));
+            }
+            if (!entitySerializerOptions.converters.CanConvertType<double>())
+            {
+                entitySerializerOptions.JsonSerializerOptions.Converters.Add(
+                    entitySerializerOptions.converters.Set(new DoubleConverter(entitySerializerOptions)));
             }
             if (!entitySerializerOptions.converters.CanConvertType<object>())
             {
