@@ -15,15 +15,16 @@
 		<description>Source Nuget package for serializing an Entity using System.Text.JSON.</description>
 		<releaseNotes>
 			v$version$:
-			- First release
+			- Support Double serialization/deserialization.
+			* thnx. Jānis Veinbergs
 		</releaseNotes>
-		<copyright>Copyright 2023</copyright>
+		<copyright>Copyright 2025</copyright>
 		<tags>Xrm AlbanianXrm Dataverse JSON</tags>
 	</metadata>
 	<files>
 		<file src="..\Logo_80x80.png" target="images\" />
 		<file src="README.md" target="docs\" />
-		<file src="AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets" target="build\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets" />
-		<file src="..\PowerPlatform.EntitySerializer\**\*.cs" exclude="**\InternalsVisibleTo.cs;**\obj\**\*.*" target="build\" />
+		<file src="AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets" target="build\" />
+		<file src="..\PowerPlatform.EntitySerializer\**\*.cs"  />
 	</files>
 </package>

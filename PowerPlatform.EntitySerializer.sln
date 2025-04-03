@@ -17,8 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPlatform.EntitySeriali
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerPlatform.EntitySerializer.Sources", "PowerPlatform.EntitySerializer.Sources", "{02FF129B-F501-4521-AB29-32AA2CA3B4B5}"
 	ProjectSection(SolutionItems) = preProject
-		PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec = PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.nuspec
-		PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.targets = PowerPlatform.EntitySerializer.Sources\PowerPlatform.EntitySerializer.Sources.targets
+		PowerPlatform.EntitySerializer.Sources\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.nuspec = PowerPlatform.EntitySerializer.Sources\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.nuspec
+		PowerPlatform.EntitySerializer.Sources\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets = PowerPlatform.EntitySerializer.Sources\AlbanianXrm.PowerPlatform.EntitySerializer.Sources.targets
 		PowerPlatform.EntitySerializer.Sources\README.md = PowerPlatform.EntitySerializer.Sources\README.md
 	EndProjectSection
 EndProject
