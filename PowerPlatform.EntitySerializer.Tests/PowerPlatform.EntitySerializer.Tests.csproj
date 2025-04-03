@@ -14,7 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>	
-    <PackageReference Include="coverlet.collector" Version="6.0.4" >
+    <PackageReference Include="coverlet.collector" Version="6.0.4" Condition="'$(TargetFramework)'!='net462' AND '$(TargetFramework)'!='net472' AND '$(TargetFramework)'!='net48'">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
