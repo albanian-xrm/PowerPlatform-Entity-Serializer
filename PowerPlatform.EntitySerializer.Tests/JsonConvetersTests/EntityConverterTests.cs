@@ -91,5 +91,67 @@ namespace JsonConvertersTests
             };
             Assert.Throws<JsonException>(() => EntitySerializer.Deserialize<Entity>(input, entitySerializerOptions));
         }
+
+        [Fact]
+        public void EntityCanBeSerializedWithDouble()
+        {
+            var entity = new Entity()
+            {
+                Attributes = new AttributeCollection()
+                {
+                    { "double", 123.345d },
+                    { "decimal", 345.567m },
+                    { "double_maxvalue", Double.MaxValue },
+                    { "double_minvalue", Double.MinValue },
+                    { "decimal_maxvalue", Decimal.MaxValue },
+                    { "decimal_minvalue", Decimal.MinValue }
+                }
+            };
+            var entitySerializerOptions = new EntitySerializerOptions();
+            var serializedEntity = EntitySerializer.Serialize(entity, typeof(Entity), entitySerializerOptions);
+            output.WriteLine(serializedEntity);
+            Assert.Equal("{\"__type\":\"Entity:http://schemas.microsoft.com/xrm/2011/Contracts\",\"Attributes\":[{\"key\":\"double\",\"value\":{\"__type\":\"Double:#System\",\"__value\":123.345}},{\"key\":\"decimal\",\"value\":345.567},{\"key\":\"double_maxvalue\",\"value\":{\"__type\":\"Double:#System\",\"__value\":1.7976931348623157E+308}},{\"key\":\"double_minvalue\",\"value\":{\"__type\":\"Double:#System\",\"__value\":-1.7976931348623157E+308}},{\"key\":\"decimal_maxvalue\",\"value\":79228162514264337593543950335},{\"key\":\"decimal_minvalue\",\"value\":-79228162514264337593543950335}],\"EntityState\":null,\"FormattedValues\":[],\"Id\":\"00000000-0000-0000-0000-000000000000\",\"KeyAttributes\":[],\"LogicalName\":null,\"RelatedEntities\":[],\"RowVersion\":null}", serializedEntity);
+
+            var deserializedEntity = EntitySerializer.Deserialize<Entity>(serializedEntity, entitySerializerOptions);
+            Assert.Equal(123.345d, deserializedEntity.GetAttributeValue<double>("double"));
+            Assert.Equal(345.567m, deserializedEntity.GetAttributeValue<decimal>("decimal")); 
+            Assert.Equal(Double.MaxValue, deserializedEntity.GetAttributeValue<double>("double_maxvalue"));
+            Assert.Equal(Double.MinValue, deserializedEntity.GetAttributeValue<double>("double_minvalue"));
+            Assert.Equal(Decimal.MaxValue, deserializedEntity.GetAttributeValue<decimal>("decimal_maxvalue"));
+            Assert.Equal(Decimal.MinValue, deserializedEntity.GetAttributeValue<decimal>("decimal_minvalue"));
+        }
+
+        [Fact]
+        public void EntityCanBeSerializedWithDouble_NoSchema_DecimalDefault()
+        {
+            var entity = new Entity()
+            {
+                Attributes = new AttributeCollection()
+                {
+                    { "double", 123.345d },
+                    { "decimal", 345.567m },
+                    { "double_maxvalue", Double.MaxValue },
+                    { "double_minvalue", Double.MinValue },
+                    { "decimal_maxvalue", Decimal.MaxValue },
+                    { "decimal_minvalue", Decimal.MinValue }
+                }
+            };
+            var entitySerializerOptions = new EntitySerializerOptions()
+            {
+                WriteSchema = WriteSchemaOptions.Never
+            };
+            var serializedEntity = EntitySerializer.Serialize(entity, typeof(Entity), entitySerializerOptions);
+            output.WriteLine(serializedEntity);
+            Assert.Equal("{\"Attributes\":[{\"key\":\"double\",\"value\":123.345},{\"key\":\"decimal\",\"value\":345.567},{\"key\":\"double_maxvalue\",\"value\":1.7976931348623157E+308},{\"key\":\"double_minvalue\",\"value\":-1.7976931348623157E+308},{\"key\":\"decimal_maxvalue\",\"value\":79228162514264337593543950335},{\"key\":\"decimal_minvalue\",\"value\":-79228162514264337593543950335}],\"EntityState\":null,\"FormattedValues\":[],\"Id\":\"00000000-0000-0000-0000-000000000000\",\"KeyAttributes\":[],\"LogicalName\":null,\"RelatedEntities\":[],\"RowVersion\":null}", serializedEntity);
+
+            var deserializedEntity = EntitySerializer.Deserialize<Entity>(serializedEntity, entitySerializerOptions);
+            //No type information was preserved and defaults to decimal
+            Assert.Equal(123.345m, deserializedEntity.GetAttributeValue<decimal>("double"));
+            Assert.Equal(345.567m, deserializedEntity.GetAttributeValue<decimal>("decimal"));
+            Assert.Equal(Double.MaxValue, deserializedEntity.GetAttributeValue<double>("double_maxvalue"));
+            Assert.Equal(Double.MinValue, deserializedEntity.GetAttributeValue<double>("double_minvalue"));
+            Assert.Equal(Decimal.MaxValue, deserializedEntity.GetAttributeValue<decimal>("decimal_maxvalue"));
+            Assert.Equal(Decimal.MinValue, deserializedEntity.GetAttributeValue<decimal>("decimal_minvalue"));
+        }
     }
 }
