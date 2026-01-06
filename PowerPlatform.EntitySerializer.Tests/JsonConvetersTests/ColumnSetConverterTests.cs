@@ -47,10 +47,10 @@ namespace JsonConvertersTests
             columnSet.AddColumn("column1");
             columnSet.AddColumn("column2");
             columnSet.AddColumn("column3");
-            var json = "{\"AllColumns\":true,\"AttributeExpressions\":[],\"Columns\":[\"column1\",\"column2\",\"column3\"]}";
             // Act
             var entitySerializer = EntitySerializer.Serialize(columnSet, typeof(ColumnSet), entitySerializerOptions);
             // Assert
+            var json = "{\"__type\":\"ColumnSet:http://schemas.microsoft.com/xrm/2011/Contracts\",\"AllColumns\":true,\"AttributeExpressions\":[],\"Columns\":[\"column1\",\"column2\",\"column3\"]}";
             Assert.Equal(json, entitySerializer);
         }
 
