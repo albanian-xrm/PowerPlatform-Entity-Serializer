@@ -1,4 +1,5 @@
 ﻿using AlbanianXrm.PowerPlatform;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System.Text.Json;
 using Xunit;
@@ -127,6 +128,31 @@ namespace JsonConvertersTests
                     Assert.False(item.HasGroupBy);
                     Assert.Equal(XrmDateTimeGrouping.Month, item.DateTimeGrouping);
                 });
+        }
+
+        [Fact]
+        public void ColumnSetConverter_NestedType_WriteRead()
+        {
+            // Arrange
+            var columnSet = new ColumnSet(true);
+            columnSet.AddColumn("column1");
+            columnSet.AddColumn("column2");
+            columnSet.AddColumn("column3");
+            var parameterCollection = new ParameterCollection()
+            {
+                { "ReturnRepresentationColumnSet", columnSet }
+            };
+            var entitySerializerOptions = new EntitySerializerOptions()
+            {
+                WriteSchema = WriteSchemaOptions.IfNeeded,
+                Strictness = Strictness.Strict,
+            };
+            // Act
+            //Serialize columnSet
+            var serialized = EntitySerializer.Serialize(parameterCollection, typeof(ParameterCollection));
+            var deserialized = EntitySerializer.Deserialize<ParameterCollection>(serialized);
+            // Assert
+            Assert.Equivalent(parameterCollection, deserialized, true);
         }
     }
 }
