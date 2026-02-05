@@ -17,6 +17,7 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         private JsonConverter<OptionSetValue> optionSetValueConverter;
         private JsonConverter<IList<object>> listOfObjectsConverter;
         private JsonConverter<OptionSetValueCollection> optionSetValueCollectionConverter;
+        private JsonConverter<EntityCollection> entityCollectionConverter;
 
         public AttributeCollectionConverter(EntitySerializerOptions entitySerializerOptions)
         {
@@ -55,10 +56,30 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
                     }
                     else if (EntitySerializer.CollectionValuePropertyName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        if (reader.TokenType == JsonTokenType.StartArray) // Choices
+                        if (reader.TokenType == JsonTokenType.StartArray) // Choices or EntityCollection
                         {
                             InitializeOptionSetValueCollectionConverter();
-                            itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
+                            if (entitySerializerOptions.KnownAttributeTypes.TryGetValue(itemKey, out Type knownType))
+                            {
+                                if (typeof(EntityCollectionConverter).Equals(knownType))
+                                {
+                                    InitializeEntityCollectionConverter();
+                                    itemValue = entityCollectionConverter.Read(ref reader, typeof(EntityCollection), options);
+                                }
+                                else if (typeof(OptionSetValueCollectionConverter).Equals(knownType))
+                                {
+                                    InitializeOptionSetValueCollectionConverter();
+                                    itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
+                                }
+                                else
+                                {
+                                    itemValue = ObjectContractConverter.ReadValue(ref reader, options, entitySerializerOptions, ref objectContractConverter, ref listOfObjectsConverter, itemKey);
+                                }
+                            }
+                            else
+                            {
+                                itemValue = optionSetValueCollectionConverter.Read(ref reader, typeof(OptionSetValueCollection), options);
+                            }
                         }
                         else
                         {
@@ -183,6 +204,13 @@ namespace AlbanianXrm.PowerPlatform.JsonConverters
         {
             if (optionSetValueCollectionConverter == null)
                 optionSetValueCollectionConverter = entitySerializerOptions.converters.GetForType<OptionSetValueCollection>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void InitializeEntityCollectionConverter()
+        {
+            if (entityCollectionConverter == null)
+                entityCollectionConverter = entitySerializerOptions.converters.GetForType<EntityCollection>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

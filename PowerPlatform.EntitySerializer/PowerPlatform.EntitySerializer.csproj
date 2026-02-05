@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AlbanianXrm.PowerPlatform.EntitySerializer</AssemblyName>
     <RootNamespace>AlbanianXrm.PowerPlatform</RootNamespace>
-    <TargetFrameworks>net8;net6;net462;net472;net48</TargetFrameworks>
+    <TargetFrameworks>net8;net462;net472;net48</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>AlbanianXrm.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -34,6 +34,6 @@ Added support for the full .net framework too.</PackageReleaseNotes>
   </ItemGroup>
  
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
   </ItemGroup>
 </Project>

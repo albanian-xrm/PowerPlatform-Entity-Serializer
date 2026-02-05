@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
@@ -20,7 +21,9 @@ namespace AlbanianXrm.PowerPlatform
 
         public HashSet<string> KnowGuidAttributes { get { return _KnownGuidAttributes; } }
 
-        public Dictionary<string, object> UnknownPropertiesLastSerialization = new Dictionary<string, object>();
+        public Dictionary<string, Type> KnownAttributeTypes { get; set; } = new Dictionary<string, Type>();
+
+        public Dictionary<string, object> UnknownPropertiesLastSerialization { get; set; } = new Dictionary<string, object>();
 
         public DateOptions DateOptions { get; set; } = DateOptions.SerializeIsoDate;
 

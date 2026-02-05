@@ -14,6 +14,7 @@ namespace EntitySerializerTests
   ""BusinessUnitId"": ""d5807889-0f5f-ee11-8def-000d3adbef1f"",
   ""CorrelationId"": ""b5940787-bdf1-4d42-89aa-671ba512a488"",
   ""Depth"": 1,
+  ""Unknown"": null,
   ""InitiatingUserAgent"": """",
   ""InitiatingUserAzureActiveDirectoryObjectId"": ""3d280606-3712-4759-b6b9-7302f8d1a3b0"",
   ""InitiatingUserId"": ""c7877889-0f5f-ee11-8def-000d3adbef1f"",
@@ -282,6 +283,34 @@ namespace EntitySerializerTests
           ""__type"": ""Entity:http://schemas.microsoft.com/xrm/2011/Contracts"",
           ""Attributes"": [
             {
+              ""key"": ""requiredattendees"",
+              ""value"": [
+                {
+                  ""__type"": ""Entity:http://schemas.microsoft.com/xrm/2011/Contracts"",
+                  ""Attributes"": [
+                    {
+                      ""key"": ""partyid"",
+                      ""value"": {
+                        ""__type"": ""EntityReference:http://schemas.microsoft.com/xrm/2011/Contracts"",
+                        ""Id"": ""f0459662-7d02-f111-8407-7ced8d48fc4e"",
+                        ""KeyAttributes"": [],
+                        ""LogicalName"": ""contact"",
+                        ""Name"": null,
+                        ""RowVersion"": null
+                    }
+                 }
+               ],
+               ""EntityState"": null,
+               ""FormattedValues"": [],
+               ""Id"": ""00000000-0000-0000-0000-000000000000"",
+               ""KeyAttributes"": [],
+               ""LogicalName"": ""activityparty"",
+               ""RelatedEntities"": [],
+               ""RowVersion"": null
+               }
+             ]
+            },
+            {
               ""key"": ""shko_string"",
               ""value"": ""This is a String""
             },
@@ -470,7 +499,11 @@ namespace EntitySerializerTests
   ""UserAzureActiveDirectoryObjectId"": ""3d280606-3712-4759-b6b9-7302f8d1a3b0"",
   ""UserId"": ""c7877889-0f5f-ee11-8def-000d3adbef1f""
 }";
-            var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(serializedContext);
+            var remoteExecutionContext = EntitySerializer.Deserialize<RemoteExecutionContext>(serializedContext, new EntitySerializerOptions()
+            {
+                Strictness = Strictness.Loose,
+                KnownAttributeTypes = { { "requiredattendees", typeof(EntityCollection) } }
+            });
             var target = remoteExecutionContext.InputParameters["Target"] as Entity;
             Assert.NotNull(remoteExecutionContext);
             Assert.Equal(40, remoteExecutionContext.Stage);
@@ -479,7 +512,7 @@ namespace EntitySerializerTests
             Assert.Equal(321, target.GetAttributeValue<int?>("shko_integer"));
             var shko_currency = target.GetAttributeValue<Money>("shko_currency");
             Assert.NotNull(shko_currency);
-            Assert.Equal(100,shko_currency.Value);
+            Assert.Equal(100, shko_currency.Value);
             Assert.Equal(new DateTime(2023, 10, 17, 07, 00, 00, DateTimeKind.Utc), target.GetAttributeValue<DateTime>("shko_datetime"));
             Assert.Equal(10.12m, target.GetAttributeValue<decimal>("shko_decimal"));
             Assert.False(target.GetAttributeValue<bool>("shko_bool"));
